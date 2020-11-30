@@ -82,7 +82,7 @@ class BasicUtils {
                }
             }
         }));
-        console.log(userInfo);
+        
         return userInfo;
     }
 }

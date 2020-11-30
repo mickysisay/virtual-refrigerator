@@ -1,9 +1,29 @@
 import logo from './logo.svg';
 import './App.css';
+import Login from './components/Login'
+import {  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory,
+  useLocation} from 'react-router-dom'
 
 function App() {
   return (
-    <div className="App">
+    <Router>
+    
+    <Switch>
+         
+              
+            <Route path="/login" >
+            <Login />
+            </Route>
+             
+            <Route path="/main" />
+            <Route path="/">
+            <div className="App">
+      
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -19,6 +39,11 @@ function App() {
         </a>
       </header>
     </div>
+
+            </Route>
+              
+          </Switch>
+    </Router>
   );
 }
 
