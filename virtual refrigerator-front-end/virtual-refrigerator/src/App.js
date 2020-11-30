@@ -1,13 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
 import Login from './components/Login'
+import {AuthenticatedRoute} from './Utils/AuthenticatedRoute'
+import MainPage from './components/MainPage'
+
 import {  BrowserRouter as Router,
   Switch,
   Route,
-  Link,
-  Redirect,
-  useHistory,
-  useLocation} from 'react-router-dom'
+  } from 'react-router-dom'
 
 function App() {
   return (
@@ -16,11 +16,10 @@ function App() {
     <Switch>
          
               
-            <Route path="/login" >
-            <Login />
-            </Route>
-             
-            <Route path="/main" />
+          <Route exact path="/login" component={Login} />
+            
+          <AuthenticatedRoute exact path= "/main" component={MainPage} />
+            
             <Route path="/">
             <div className="App">
       
