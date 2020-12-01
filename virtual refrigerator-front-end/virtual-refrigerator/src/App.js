@@ -3,11 +3,13 @@ import './App.css';
 import Login from './components/Login'
 import {AuthenticatedRoute} from './Utils/AuthenticatedRoute'
 import MainPage from './components/MainPage'
+import SignUp from './components/Signup'
 
 import {  BrowserRouter as Router,
   Switch,
   Route,
   } from 'react-router-dom'
+
 
 function App() {
   return (
@@ -17,10 +19,10 @@ function App() {
          
               
           <Route exact path="/login" component={Login} />
-            
+          <Route exact path="/signup" component={SignUp} />  
           <AuthenticatedRoute exact path= "/main" component={MainPage} />
             
-            <Route path="/">
+            <Route exact path="/">
             <div className="App">
       
       <header className="App-header">

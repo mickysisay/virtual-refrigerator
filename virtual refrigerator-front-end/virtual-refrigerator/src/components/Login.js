@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Requests from  "../Utils/Requests"
+import LoadingButton from "./LoadingButton"
 
 export default class Login extends React.Component{
 
@@ -63,7 +64,8 @@ export default class Login extends React.Component{
 
         return (<div>
             <h1>Hello world</h1>
-             <h4>{this.state.isLoading ? `Loading` : null}</h4>
+             <div>{this.state.isLoading ? <LoadingButton /> : null}</div>
+             
             <hr></hr>
             <form onSubmit = {(e)=>{this.handleLoginSubmit(e)}}>
                 <label>Username : <input type="text" id = "username" onChange = {(e)=>{this.handleInputChange(e)}} /></label><hr />
