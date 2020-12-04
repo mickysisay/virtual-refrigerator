@@ -74,14 +74,15 @@ class BasicUtils {
         //temporary array search
         const arr = constants.mockUsers;
         let userInfo = {status:false,message:"bad username or password"};
-        await Promise.all( arr.map(async (e) =>{
-            if(e.username === username){
-             const passwordMatches  = await bcrypt.compare(password, e.password);
+       
+        for(let ex in arr){
+            if(arr[ex].username === username){
+                 const passwordMatches  =await bcrypt.compareSync(password, arr[ex].password);
                if(passwordMatches){ 
-                userInfo =  {status: true, user : e};
+                userInfo =  {status: true, user : arr[ex].username};
                }
-            }
-        }));
+            } 
+        }
         
         return userInfo;
     }

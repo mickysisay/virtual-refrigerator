@@ -88,7 +88,7 @@ export default class SignUp extends React.Component {
                 onChange={e=>this.handleInputChange(e)} /></label><hr />
                 <label>email : <input type="text" id="email"  onChange = {(e) =>{this.handleInputChange(e)} }/> </label><hr />
                 <h4>{this.state.inputError.status ? this.state.inputError.message : null}</h4>
-                <button>Login</button>
+                <button>SignUp</button>
             </form><hr />
              <h3>{this.state.responseError.status ? this.state.responseError.message : null}</h3>
         </div>);

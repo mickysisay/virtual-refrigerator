@@ -10,11 +10,14 @@ export default class Requests {
            "username": state.username,
            "password" : state.password
        }
-    
+     
+      
       //send axios request to url
        try{
           const resp = await axios.post(endpoint,data);
-          
+          console.log(resp.data.token);
+          const token = resp.data.bearer + " " + resp.data.token;
+          localStorage.setItem("token",token);
           return {statusCode : 200, message : resp.data};
        }catch(e){
           const resp = e.response;

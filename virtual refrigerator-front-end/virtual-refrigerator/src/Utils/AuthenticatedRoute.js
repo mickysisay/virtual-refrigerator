@@ -12,6 +12,9 @@ export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => (
       localStorage.getItem("token")
         ? <Component {...props} />
-        : <Redirect to='/login' />
+        : <Redirect to={{
+            pathname: "login",
+            state: { referrer: rest.path }
+          }} />
     )} />
 )

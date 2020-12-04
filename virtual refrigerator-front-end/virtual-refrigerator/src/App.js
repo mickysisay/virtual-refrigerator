@@ -4,17 +4,34 @@ import Login from './components/Login'
 import {AuthenticatedRoute} from './Utils/AuthenticatedRoute'
 import MainPage from './components/MainPage'
 import SignUp from './components/Signup'
+import {Navbar as Navigationbar,Nav as Navigation,Form} from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.css'
 
 import {  BrowserRouter as Router,
   Switch,
   Route,
   } from 'react-router-dom'
+import { Fragment } from 'react';
 
 
 function App() {
   return (
+    <Fragment>
+       <Navigationbar bg="dark" variant="dark">
+    <Navigationbar.Brand href="main">Home</Navigationbar.Brand>
+    <Navigation className="mr-auto">
+
+    </Navigation>
+    <Form inline>
+    <Navigation className="mr-auto">
+      <Navigation.Link href="/login">Login</Navigation.Link>
+      <Navigation.Link className="justify-content-end" href="/signup">Sign Up</Navigation.Link>
+    </Navigation>
+    </Form>
+  </Navigationbar>
     <Router>
-    
+      
+  
     <Switch>
          
               
@@ -45,6 +62,7 @@ function App() {
               
           </Switch>
     </Router>
+    </Fragment>
   );
 }
 
