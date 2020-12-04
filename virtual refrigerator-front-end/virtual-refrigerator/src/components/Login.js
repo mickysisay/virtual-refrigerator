@@ -1,8 +1,7 @@
 import React from "react";
-import ReactDOM from "react-dom";
+
 import Requests from "../Utils/Requests"
 import LoadingButton from "./LoadingButton"
-import { Navbar as Navigationbar, Nav as Navigation, Form, Button } from 'react-bootstrap';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBIcon, MDBModalFooter } from 'mdbreact';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
@@ -30,6 +29,7 @@ export default class Login extends React.Component {
         }
     }
     handleInputChange = (e) => {
+       
         if (e.target.id === "username") {
             this.setState({
                 username: e.target.value
@@ -42,7 +42,7 @@ export default class Login extends React.Component {
     }
     handleLoginSubmit = async (e) => {
         e.preventDefault();
-        console.log(this.props.location.state.referrer);
+       
         if(this.state.inputError.status){
             this.setState({
                 error:{
@@ -60,10 +60,14 @@ export default class Login extends React.Component {
         //resp has statusCode and message and status
         const statusCode = resp.statusCode;
         const message = resp.message.message;
+        let referrer = "main";
+        try{
+            referrer = this.props.location.state.referrer;
+        }catch(ex){};
         console.log(statusCode);
         if (statusCode === 200) {
-            
-            this.props.history.push(this.props.location.state.referrer ? "main" : this.props.location.state.referrer)
+            this.props.updateLoggedIn();
+            this.props.history.push(referrer);
             //redirect to other route
         } else {
             //display error message
@@ -75,9 +79,12 @@ export default class Login extends React.Component {
             });
 
         }
-        this.setState({
-            isLoading: false
-        });
+        setTimeout(()=>{
+            this.setState({
+                isLoading: false
+            });
+        },2000);
+        
         console.log(resp);
     }
 }
@@ -164,7 +171,7 @@ export default class Login extends React.Component {
                                     </form>
                                     <MDBModalFooter>
                                         <div className="font-weight-light">
-                                            <p>Not a member?  Sign Up</p>
+                                            <p>Not a member? <a href ="/signup">  Sign Up</a></p>
 
                                         </div>
                                     </MDBModalFooter>

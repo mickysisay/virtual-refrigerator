@@ -1,32 +1,46 @@
+
 import logo from './logo.svg';
 import './App.css';
 import Login from './components/Login'
-import {AuthenticatedRoute} from './Utils/AuthenticatedRoute'
+import {AuthenticatedRoute, isAuthorized} from './Utils/AuthenticatedRoute'
+import {Logout} from './components/Logout'
 import MainPage from './components/MainPage'
 import SignUp from './components/Signup'
 import {Navbar as Navigationbar,Nav as Navigation,Form} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css'
-
+import {PublicRoute} from './Utils/PublicRoute'
 import {  BrowserRouter as Router,
   Switch,
   Route,
   } from 'react-router-dom'
-import { Fragment } from 'react';
+import { Fragment,useState } from 'react';
 
 
 function App() {
+
+  const [loggingIn,setLoggingIn] = useState(false);
+
+  const updateLoggedIn = ()=>{
+    setLoggingIn(loggingIn ? false : true);
+  }
+  
   return (
     <Fragment>
        <Navigationbar bg="dark" variant="dark">
-    <Navigationbar.Brand href="main">Home</Navigationbar.Brand>
+    <Navigationbar.Brand href="/">Home</Navigationbar.Brand>
     <Navigation className="mr-auto">
 
     </Navigation>
     <Form inline>
-    <Navigation className="mr-auto">
+    <Navigation className="mr-auto">{isAuthorized() ?
+      <Navigation.Link href="/logout">Logout</Navigation.Link> :
       <Navigation.Link href="/login">Login</Navigation.Link>
+    }
+     { isAuthorized() ? null :
       <Navigation.Link className="justify-content-end" href="/signup">Sign Up</Navigation.Link>
-    </Navigation>
+     }
+     
+   </Navigation>
     </Form>
   </Navigationbar>
     <Router>
@@ -35,9 +49,10 @@ function App() {
     <Switch>
          
               
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/signup" component={SignUp} />  
-          <AuthenticatedRoute exact path= "/main" component={MainPage} />
+          <PublicRoute updateLoggedIn = {updateLoggedIn} exact path="/login" component={Login} />
+          <PublicRoute updateLoggedIn = {updateLoggedIn} exact path="/signup" component={SignUp} />
+          <AuthenticatedRoute updateLoggedIn = {updateLoggedIn}  exact path="/logout" component={Logout} />  
+          <AuthenticatedRoute updateLoggedIn = {updateLoggedIn}  exact path= "/main" component={MainPage} />
             
             <Route exact path="/">
             <div className="App">

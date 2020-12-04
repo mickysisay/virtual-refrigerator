@@ -1,20 +1,24 @@
-import {Component} from "react";
-import {  BrowserRouter as Router,
-    Switch,
+import {
     Route,
-    Link,
     Redirect,
-    history ,
-    useHistory,
-    useLocation} from 'react-router-dom'
+} from 'react-router-dom'
 
 export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => (
-      localStorage.getItem("token")
-        ? <Component {...props} />
-        : <Redirect to={{
-            pathname: "login",
-            state: { referrer: rest.path }
-          }} />
+        isAuthorized()
+            ? <Component updateLoggedIn={rest.updateLoggedIn} {...props} />
+            : <Redirect to={{
+                pathname: "login",
+                state: { referrer: rest.path }
+            }} />
     )} />
 )
+
+
+export const isAuthorized = function () {
+    return localStorage.getItem("token");
+}
+export const LogOut = function () {
+    localStorage.removeItem("token");
+}
+
