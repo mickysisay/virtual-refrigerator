@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const constants = require('./constants');
 const bcrypt = require('bcrypt');
 const { hashPassword } = require('./utils');
+const commonQueries = require('./mysql/commonQueries')
 //const SECRETKEY= "secret";
 
 
@@ -68,9 +69,9 @@ app.get("/api/users/all",(req,res)=>{
 
 app.post("/api/signup", async (req,res)=>{
     //check if user data is valid
-    const dataVerification = basicUtils.verifySignUpInformation(req);
+    const dataVerification = await basicUtils.verifySignUpInformation(req);
     if(!dataVerification.status){
-        res.json(dataVerification);
+        res.status(400).json(dataVerification);
     }else{
     const id = basicUtils.createUniqueId();
     const hashedPass =await bcrypt.hash(req.body.password, constants.SALTROUNDS);
@@ -78,10 +79,11 @@ app.post("/api/signup", async (req,res)=>{
         id:id,
         username : req.body.username,
         password : hashedPass,
-        email : req.body.email,
+        email : req.body.email.trim(),
     }
     //push this to mockUpUSer
-    constants.mockUsers.push(userData);
+    commonQueries.addUserToDatabase(userData);
+    //constants.mockUsers.push(userData);
     res.json({success:true, message: "user signed up succesfully"});
     } 
 })
@@ -95,4 +97,4 @@ app.post("/api/create/vr",basicUtils.verifyToken,async (req,res)=>{
 
 });
 
-app.listen(5000, ()=>{console.log("server started on port 5000")});
+module.exports = app;

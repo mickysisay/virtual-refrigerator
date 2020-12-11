@@ -1,0 +1,29 @@
+{
+  "name": "virtual-refrigerator-server-side",
+  "version": "1.0.0",
+  "description": "express js backend for virtual-refrigerator app",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "jest": "^26.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1",
+    "superagent": "^6.1.0",
+    "supertest": "^6.0.1",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jest",
+    "start": "node server.js"
+  },
+  "author": "Michael sisay",
+  "license": "ISC"
+}

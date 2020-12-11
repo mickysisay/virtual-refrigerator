@@ -79,13 +79,12 @@ export default class Login extends React.Component {
             });
 
         }
-        setTimeout(()=>{
+      
             this.setState({
                 isLoading: false
             });
-        },2000);
         
-        console.log(resp);
+       
     }
 }
     validateInput = e => {

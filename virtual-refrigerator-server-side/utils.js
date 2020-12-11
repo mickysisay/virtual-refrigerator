@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const constants = require('./constants');
 const bcrypt = require('bcrypt');
 const { v1: uuidv1 } = require('uuid');
+const commonQueries = require('./mysql/commonQueries');
 
 
 class BasicUtils {
@@ -31,13 +32,17 @@ class BasicUtils {
     static async hashPassword(password){
        
     }
-    static usernameExists(username){
-        return constants.mockUsers.some((e)=>{
-            return e.username === username;
-        });
+    static async usernameExists(username){
+    
+    const res =  await commonQueries.doesUsernameExist(username) 
+        return res;  
+    }
+    static async emailExists(email){
+     const res =  await commonQueries.doesEmailExist(email) 
+        return res;  
     }
 
-    static verifySignUpInformation(req){
+     static async verifySignUpInformation(req){
         let username = req.body.username;
         let password = req.body.password;
         let email = req.body.email;
@@ -45,7 +50,7 @@ class BasicUtils {
             if(username.trim().length < 6){
                 return {status:false , message:"username too short"}
             }
-            if(this.usernameExists(username)){
+            if( await this.usernameExists(username)){
                 return {status:false, message: "username exists"}
             }
         }else{
@@ -59,7 +64,10 @@ class BasicUtils {
             return {status : false, message : "need password"};
         }
         if(email != null){
-           if(email.trim().substring(email.trim().length - 4) !==".com"){
+            if( await this.emailExists(email.trim())){
+                return {status:false, message: "email already exists"}
+            }
+            if(email.trim().substring(email.trim().length - 4) !==".com"){
                return {status : false, message: "not a valid email"};
            }
         }else{
