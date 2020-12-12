@@ -79,20 +79,18 @@ class BasicUtils {
         return uuidv1();
     }
     static async findByUsernameAndPassword(username,password){
-        //temporary array search
-        const arr = constants.mockUsers;
-        let userInfo = {status:false,message:"bad username or password"};
-       
-        for(let ex in arr){
-            if(arr[ex].username === username){
-                 const passwordMatches  =await bcrypt.compareSync(password, arr[ex].password);
-               if(passwordMatches){ 
-                userInfo =  {status: true, user : arr[ex].username};
-               }
-            } 
+        const res = await commonQueries.findByUsername(username);
+        if(res){
+            const passwordMatches  =await bcrypt.compareSync(password, res.password);
+            if(passwordMatches){
+               return {status : true, user : res}
+            }else{
+                return {status:false,message:"incorrect password"};
+            }
+        }else{
+            return {status:false,message:"No users found with that username"};
         }
-        
-        return userInfo;
+       
     }
 }
 

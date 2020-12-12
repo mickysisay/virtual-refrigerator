@@ -20,20 +20,22 @@ function openConnection(){
      return connection; 
 }
 
-const addUserToDatabase = (userInfo)=> {
+const addUserToDatabase = async (userInfo)=> {
     let connection = openConnection();
     if(!connection){
         console.log();
         return;
     }
-    connection.query({
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
         sql:'INSERT INTO `users` (`id`,`username`,`password`,`email`) VALUES (?,?,?,?)',
         timeout : 40000,
         values:[userInfo.id,userInfo.username,userInfo.password,userInfo.email.trim()]
-    },(err,res,feilds)=>{
-        console.log(err);
     });
     connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);  
+    return result.length;
 }
 const doesUsernameExist = async (username) =>{
     let connection = openConnection();
@@ -47,6 +49,7 @@ const doesUsernameExist = async (username) =>{
         timeout: 40000,
         values:[username]
     });
+    connection.end();
     result = JSON.stringify(result);
     result = JSON.parse(result);  
     return result.length!==0;
@@ -63,12 +66,49 @@ const doesEmailExist = async (email) =>{
         timeout: 40000,
         values:[email]
     });
+    connection.end();
     result = JSON.stringify(result);
     result = JSON.parse(result);  
     return result.length!==0;
 }
+const findByUsername = async (username) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `users` WHERE `username` = ?  ',
+        timeout: 40000,
+        values:[username]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);  
+    return result[0];
+}
+const deleteByUserId = async (userId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'DELETE FROM `users` WHERE `id` = ?  ',
+        timeout: 40000,
+        values:[userId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);  
+    return result;
+}
 module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
-    doesEmailExist : doesEmailExist
+    doesEmailExist : doesEmailExist,
+    findByUsername : findByUsername,
+    deleteByUserId : deleteByUserId
 }

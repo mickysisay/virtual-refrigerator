@@ -82,9 +82,10 @@ app.post("/api/signup", async (req,res)=>{
         email : req.body.email.trim(),
     }
     //push this to mockUpUSer
-    commonQueries.addUserToDatabase(userData);
+    const ress =  await commonQueries.addUserToDatabase(userData);
+    delete userData.password;
     //constants.mockUsers.push(userData);
-    res.json({success:true, message: "user signed up succesfully"});
+    res.json({status:true, message: "user signed up succesfully",user:userData});
     } 
 })
 
