@@ -4,24 +4,23 @@ const commonQueries = require('../mysql/commonQueries')
 const { test, expect,describe } = require('@jest/globals');
 const BasicUtils = require('../utils');
 const endPoint = "/api/access";
-const idOfRefrigerator = "";
 const users = [];
 const userInfos = [{
-    "username" : "someuser1",
+    "username" : "someuser11",
     "password" : "12345678",
-    "email": "something1@email.com"
+    "email": "something11@email.com"
 },{
-    "username" : "someuser2",
+    "username" : "someuser22",
     "password" : "12345678",
-    "email": "something2@email.com"
+    "email": "something22@email.com"
 },{
-    "username" : "someuser3",
+    "username" : "someuser33",
     "password" : "12345678",
-    "email": "something3@email.com"
+    "email": "something33@email.com"
 },{
-    "username" : "someuser4",
+    "username" : "someuser44",
     "password" : "12345678",
-    "email": "something4@email.com"
+    "email": "something44@email.com"
 }];
 const refrigerators = [];
 beforeAll(async ()=>{
