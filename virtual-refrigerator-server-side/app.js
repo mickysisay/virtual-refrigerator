@@ -91,10 +91,10 @@ app.post("/api/signup", async (req,res)=>{
 
 //protected route
 
-app.post("/api/create/vr",basicUtils.verifyToken,async (req,res)=>{
+app.post("/api/checkToken", basicUtils.verifyToken,async (req,res)=>{
 
-    let data = await basicUtils.getInfoFromToken(req);
-    res.json(data);
+   let data = await basicUtils.getInfoFromToken(req);
+   res.json(data);
 
 });
 

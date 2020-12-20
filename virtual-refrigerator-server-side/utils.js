@@ -10,14 +10,21 @@ class BasicUtils {
    static randomNumGenerator(min,max){
         return Math.floor(Math.random()*(max-min+1))+min;
     }
-   static verifyToken(req,res,next){
+    static async verifyToken(req,res,next){
        const bearerHeader = req.headers['authorization'];
        if(typeof bearerHeader!== 'undefined'){
        const token = bearerHeader.split(" ")[1];
        req.token = token;
+       try{
+         await jwt.verify(token,constants.SECRETKEY);
+       }catch(e){
+           res.status(401).json({success:false,message:e});
+           return;
+       }
        next(); 
        }else{
-           res.sendStatus(403);
+           res.status(401).json({success:false,message:"token doesn't exist"});
+           return;
        }
    } 
     static async getInfoFromToken(req){
@@ -91,6 +98,84 @@ class BasicUtils {
             return {status:false,message:"No users found with that username"};
         }
        
+    }
+    static async getRefrigeratorFromUserIdAndRefrigeratorId(req,res){
+        const id = req.params.id;
+        if(id === undefined){
+            res.status(400).json({status:false,message:"can't find id"});
+            return;
+        }
+        let data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const response = await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,id);
+        if(response.length === 0){
+            res.status(404).json({status:false,message:"no refrigerator found"});
+            return;
+        }
+        res.json({status:true,message:response});
+    }
+    static async getRefrigeratorFromUserId(req,res){
+        let data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const response = await commonQueries.getAllRefrigeratorsByUserId(userId);
+        res.json(response);
+    }
+    static async addRefirgerator(req,res){
+        const refrigeratorData = req.body;
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        if(refrigeratorData.refrigeratorName === undefined){
+            res.status(400).json({status:false,message:"refrigerator name doesn't exist"});
+            return;
+        }
+         
+        if(refrigeratorData.refrigeratorName.trim() === ""){
+            res.status(400).json({status:false,message:"refrigerator name is empty"})
+            return;
+        }
+        const id = this.createUniqueId();
+        const userId = data.user.id;
+        const refrigeratorName = refrigeratorData.refrigeratorName;
+        const refData = {
+            id:id,
+            refrigeratorName : refrigeratorName,
+            ownerId: userId
+        };
+        await commonQueries.addRefrigerator(refData);
+        res.status(200).json({status:true, refrigerator : refData});
+    }
+    static async deleteRefrigerator(req,res){
+        const id = req.params.id;
+        if(id === undefined){
+            res.status(400).json({status:false,message:"can't find id"});
+            return;
+        }
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const result = await commonQueries.deleteRefrigeratorByUserIdAndRefrigeratorId(userId,id);
+        if(result.affectedRows === 0){
+            res.status(400).json({status:false,message:"no refrigerator found with that id"});
+            return;
+        }else{
+            res.status(200).json({status:true,message:"refrigerator deleted succesfully"});
+        }
+        
+
     }
 }
 

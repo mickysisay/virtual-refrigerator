@@ -9,17 +9,21 @@ import 'mdbreact/dist/css/mdb.css';
 import './login.css'
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import backendAPI from '../Utils/backendAPI'
 
 export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
-            username: "",
-            password: "",
-            inputError: {
-                status: true,
-                message: "Username is empty"
+            username: {
+                value: "",
+                error: ""
+            },
+            password: {
+                value: "",
+                error: ""
             },
             error: {
                 status: false,
@@ -29,43 +33,104 @@ export default class Login extends React.Component {
         }
     }
     handleInputChange = (e) => {
-       
+
         if (e.target.id === "username") {
+            const username = this.state.username;
+            username.value = e.target.value;
             this.setState({
-                username: e.target.value
+                username: username
             });
         } else if (e.target.id === "password") {
+            const password = this.state.password;
+            password.value = e.target.value;
             this.setState({
-                password: e.target.value
+                password: password
+            });
+        }
+        
+    }
+    handleBlurUsername = (e) => {
+        //const whichInput = e.target.id;
+        const username = this.state.username;
+
+        if (this.state.username.value === "") {
+            username.error = "Username is empty";
+            this.setState({
+                username: username
+            });
+        } else if (this.state.username.value.length < 6) {
+            username.error = "Username too short";
+            this.setState({
+                username: username
+            });
+        } else {
+            username.error = "";
+            this.setState({
+                username: username
+            });
+        }
+    }
+    handleBlurPassword = (e) => {
+        const password = this.state.password;
+        if (this.state.password.value === "") {
+            password.error = "Password can't be empty";
+            this.setState({
+                password: password
+            });
+        } else if (this.state.password.value.length < 6) {
+            password.error = "Password is too short";
+            this.setState({
+                password: password
+            });
+        } else {
+            password.error = "";
+            this.setState({
+                password: password
             });
         }
     }
     handleLoginSubmit = async (e) => {
         e.preventDefault();
-       
-        if(this.state.inputError.status){
+
+        if (this.state.username.value.length === 0) {
+            const username = this.state.username;
+            username.error = "username can't be empty";
             this.setState({
-                error:{
-                    status:true,
-                    message:this.state.inputError.message  
-                }
-            })
-            
-        }else{
+                username: username
+            });
+            return;
+        }
+        if (this.state.password.value.length === 0) {
+            const password = this.state.password;
+            password.error = "password can't be empty";
+            this.setState({
+                password: password
+            });
+            return;
+        }
+
+        if (this.state.username.error !== "" || this.state.password.error !== "") {
+            return;
+        }
         //set is loading to true;
-        this.setState({
-            isLoading: true
-        });
-        const resp = await Requests.loginPost(this.state);
+        this.setState({ isLoading: true });
+        const dataToSend = {
+            "username": this.state.username.value,
+            "password": this.state.password.value
+        }
+        const resp = await backendAPI.loginRequest(dataToSend);
+
         //resp has statusCode and message and status
         const statusCode = resp.statusCode;
         const message = resp.message.message;
         let referrer = "main";
-        try{
+        try {
             referrer = this.props.location.state.referrer;
-        }catch(ex){};
-        console.log(statusCode);
+        } catch (ex) { };
+
         if (statusCode === 200) {
+            const token = resp.message.type + " " + resp.message.token;
+            localStorage.setItem("token", token);
             this.props.updateLoggedIn();
             this.props.history.push(referrer);
             //redirect to other route
@@ -77,51 +142,13 @@ export default class Login extends React.Component {
                     message: message
                 }
             });
+        }
+        this.setState({ isLoading: false });
 
-        }
-      
-            this.setState({
-                isLoading: false
-            });
-        
-       
+
+
     }
-}
-    validateInput = e => {
-        if (e.target.id === "username") {
-           if(this.state.username.length <6){
-               this.setState({
-                   inputError:{
-                       status:true,
-                       message:"username too short"
-                   }
-               })
-           }else{
-            this.setState({
-                inputError:{
-                    status:false,
-                    message:""
-                }
-            })
-           }
-        } else if (e.target.id === "password") {
-            if(this.state.password.length <6){
-                this.setState({
-                    inputError:{
-                        status:true,
-                        message:"password too short"
-                    }
-                })
-            }else{
-             this.setState({
-                 inputError:{
-                     status:false,
-                     message:""
-                 }
-             })
-            }
-        }
-    }
+
 
     componentDidUpdate(prevProps, prevState) {
         if (this.state.error.status === true) {
@@ -135,7 +162,7 @@ export default class Login extends React.Component {
                 }
             });
         }
-        
+
     }
 
     render() {
@@ -159,18 +186,27 @@ export default class Login extends React.Component {
                                             <MDBInput label="username" icon="user"
                                                 id="username"
                                                 onChange={(e) => { this.handleInputChange(e) }}
-                                                onBlur={(e) => { this.validateInput(e) }} />
+                                                onBlur={(e) => { this.handleBlurUsername(e) }}
+                                                data-testid="username" />
+                                            <p
+                                            data-testid = "usernameError"
+                                            className="error-message">{this.state.username.error}</p>
                                             <MDBInput label="password" icon="lock" group type="password" validate
                                                 id="password" onChange={(e) => { this.handleInputChange(e) }}
-                                                onBlur={(e) => { this.validateInput(e) }}  />
+                                                onBlur={(e) => { this.handleBlurPassword(e) }} 
+                                                data-testid="password"/>
+                                            <p
+                                            data-testid = "passwordError"
+                                            className="error-message">{this.state.password.error}</p>
                                         </div>
                                         <div className="text-center">
-                                            <MDBBtn onClick={(e) => { this.handleLoginSubmit(e) }}>Login</MDBBtn>
+                                            <MDBBtn onClick={(e) => { this.handleLoginSubmit(e) }}
+                                            data-testid="loginButton">Login</MDBBtn>
                                         </div>
                                     </form>
                                     <MDBModalFooter>
                                         <div className="font-weight-light">
-                                            <p>Not a member? <a href ="/signup">  Sign Up</a></p>
+                                            <p>Not a member? <a href="/signup">  Sign Up</a></p>
 
                                         </div>
                                     </MDBModalFooter>
