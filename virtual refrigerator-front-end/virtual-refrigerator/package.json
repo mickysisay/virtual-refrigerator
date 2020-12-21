@@ -11,6 +11,7 @@
     "mdbreact": "^5.0.0",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
+    "react-confirm-alert": "^2.6.2",
     "react-dom": "^17.0.1",
     "react-loading": "^2.0.3",
     "react-loadingg": "^1.7.2",

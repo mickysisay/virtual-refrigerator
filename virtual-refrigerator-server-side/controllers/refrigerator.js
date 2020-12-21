@@ -14,5 +14,8 @@ app.post("/api/refrigerator/add", basicUtils.verifyToken,async (req,res)=>{
 app.post("/api/refrigerator/remove/:id",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.deleteRefrigerator(req,res);
 })
+app.post("/api/refrigerator/update/:id",basicUtils.verifyToken,async (req,res)=>{
+    await basicUtils.updateRefrigerator(req,res);
+})
 
 module.exports = app;

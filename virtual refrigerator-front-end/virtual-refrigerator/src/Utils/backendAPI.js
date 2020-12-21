@@ -101,6 +101,22 @@ const deleteRefrigerator = async (id) =>{
     const response = await postRequestsWithToken(endpoint);
     return response;
 }
+const addRefrigerator = async (name) =>{
+    const endpoint = APPURL + "refrigerator/add";
+    const data = {
+        refrigeratorName : name
+    }
+    const response = await postRequestsWithToken(endpoint,data);
+    return response;
+}
+const updateRefrigerator = async (name,id) =>{
+    const endpoint = APPURL + "refrigerator/update/"+id;
+    const data = {
+        refrigeratorName : name
+    }
+    const response = await postRequestsWithToken(endpoint,data);
+    return response;
+}
 const signupRequest = async (state) =>{
     const endpoint = APPURL +"signup";
     const data = {
@@ -118,7 +134,9 @@ const backendAPI = {
     signupRequest: signupRequest,
     checkToken:checkToken,
     getAllRefrigetors:getAllRefrigetors,
-    deleteRefrigerator : deleteRefrigerator
+    deleteRefrigerator : deleteRefrigerator,
+    addRefrigerator :addRefrigerator,
+    updateRefrigerator : updateRefrigerator
 }
 
 export default backendAPI;

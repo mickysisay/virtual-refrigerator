@@ -173,6 +173,23 @@ const deleteRefrigeratorByUserIdAndRefrigeratorId = async (userId,refrigeratorId
     result = JSON.parse(result);  
     return result;
 }
+const updateRefrigeratorByUserIdAndRefrigerator = async (userId,refrigeratorId,refrigeratorName)=>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'UPDATE `refrigerators` SET `refrigerator_name` = ? WHERE `owner_id` = ? AND `id` = ?  ',
+        timeout: 40000,
+        values:[refrigeratorName,userId,refrigeratorId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);  
+    return result;
+}
 module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
@@ -182,5 +199,6 @@ module.exports = {
     getAllRefrigeratorsByUserId:getAllRefrigeratorsByUserId,
     addRefrigerator:addRefrigerator,
     getRefrigeratorByUserIdAndRefrigeratorId:getRefrigeratorByUserIdAndRefrigeratorId,
-    deleteRefrigeratorByUserIdAndRefrigeratorId :deleteRefrigeratorByUserIdAndRefrigeratorId
+    deleteRefrigeratorByUserIdAndRefrigeratorId :deleteRefrigeratorByUserIdAndRefrigeratorId,
+    updateRefrigeratorByUserIdAndRefrigerator : updateRefrigeratorByUserIdAndRefrigerator
 }

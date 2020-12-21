@@ -155,6 +155,36 @@ class BasicUtils {
         await commonQueries.addRefrigerator(refData);
         res.status(200).json({status:true, refrigerator : refData});
     }
+    static async updateRefrigerator(req,res){
+        const id = req.params.id;
+        if(id === undefined){
+            res.status(400).json({status:false,message:"can't find id"});
+            return;
+        }
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const refrigeratorName = req.body.refrigeratorName;
+        if(refrigeratorName === undefined){
+            res.status(400).json({status:false,message:"refrigerator name doesn't exist"});
+            return;
+        }
+         
+        if(refrigeratorName.trim() === ""){
+            res.status(400).json({status:false,message:"refrigerator name is empty"})
+            return;
+        }
+        const result = await commonQueries.updateRefrigeratorByUserIdAndRefrigerator(userId,id,refrigeratorName);
+        if(result.affectedRows === 0){
+            res.status(400).json({status:false,message:"no refrigerator found with that id"});
+            return;
+        }else{
+            res.status(200).json({status:true,message:"refrigerator edited Succesfully"});
+        }
+    }
     static async deleteRefrigerator(req,res){
         const id = req.params.id;
         if(id === undefined){

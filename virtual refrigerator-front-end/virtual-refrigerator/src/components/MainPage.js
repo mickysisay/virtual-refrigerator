@@ -3,22 +3,27 @@ import backendAPI from '../Utils/backendAPI'
 import RefrigeratorCard from './RefrigeratorCard';
 import {Grid} from '@material-ui/core';
 import 'bootstrap/dist/css/bootstrap.css'
+import AddRefrigeratorModal from './AddRefrigeratorModal'
 
 export default class MainPage extends React.Component{
 
     constructor (props){
         super(props);
         this.state = {
-            refrigerators :[]
+            refrigerators :[],
+            done : false
         }
     }
     saveAllRefrigerators =async ()=>{
+        console.log("hello")
     const response =await backendAPI.getAllRefrigetors();
     const refrigerators = response.message;
     if(response.statusCode === 200){
     this.setState({
-        refrigerators : refrigerators
+        refrigerators : refrigerators,
+        done : this.state.done ? false : true
     });
+
     
     }
     }
@@ -30,21 +35,11 @@ export default class MainPage extends React.Component{
        //console.log( await backendAPI.checkToken());
     }
 
+  
+
     render(){
-        const allRefrigerators = [];
-        console.log(this.state.refrigerators);
-        for(let i=0;i<this.state.refrigerators.length ; i++){
         
-        allRefrigerators.push(
-            <Grid item key={this.state.refrigerators[i]["id"]}
-           
-             >
-        <RefrigeratorCard 
-        handleClick = {this.clickRefrigeratorHandle} 
-        updateRef = {this.saveAllRefrigerators}   refrigerator = {this.state.refrigerators[i]} />
-        </Grid>
-        );
-        }
+        
 
         return(
             <div>
@@ -56,8 +51,18 @@ export default class MainPage extends React.Component{
                     spacing={32}
                     className='mt-5'
                     >
-                    {allRefrigerators}
+                    {this.state.refrigerators.map((e)=>{
+                    return (   <Grid item key={e["id"]}
+           
+                        >
+                   <RefrigeratorCard 
+                   handleClick = {this.clickRefrigeratorHandle} 
+                   updateRef = {this.saveAllRefrigerators}   refrigerator = {e} />
+                   </Grid>)
+                    })}
+                   
                 </Grid>
+                <AddRefrigeratorModal  updateRef = {this.saveAllRefrigerators} />
             </div>
         );
     }
