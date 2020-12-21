@@ -15,7 +15,7 @@ export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
-
+        
         this.state = {
             username: {
                 value: "",
@@ -33,7 +33,7 @@ export default class Login extends React.Component {
         }
     }
     handleInputChange = (e) => {
-
+ 
         if (e.target.id === "username") {
             const username = this.state.username;
             username.value = e.target.value;
@@ -171,7 +171,7 @@ export default class Login extends React.Component {
 
             <div>{this.state.isLoading ? <LoadingButton /> : null}</div>
             <div className=" login-bar">
-                <MDBContainer className="align-middle">
+                <MDBContainer className="align-middle mt-5"  >
                     <MDBRow>
                         <MDBCol md="6">
                             <MDBCard>

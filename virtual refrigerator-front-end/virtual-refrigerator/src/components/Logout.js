@@ -11,7 +11,7 @@ export class Logout extends React.Component{
   
 
    render(){
-       
+       console.log(this.props);
       this.props.updateLoggedIn();
        LogOut()
        

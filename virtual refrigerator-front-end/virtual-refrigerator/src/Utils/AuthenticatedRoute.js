@@ -3,9 +3,10 @@ import {
     Redirect,
 } from 'react-router-dom'
 
+
 export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
     <Route {...rest} render={(props) => (
-        isAuthorized()
+      isAuthorized()
             ? <Component updateLoggedIn={rest.updateLoggedIn} {...props} />
             : <Redirect to={{
                 pathname: "login",
@@ -16,6 +17,8 @@ export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
 
 
 export const isAuthorized = function () {
+    // await backendAPI.checkToken();
+    // console.log(localStorage.getItem("token")!== null);
     return localStorage.getItem("token");
 }
 export const LogOut = function () {

@@ -6,6 +6,7 @@ import { AuthenticatedRoute, isAuthorized } from './Utils/AuthenticatedRoute'
 import { Logout } from './components/Logout'
 import MainPage from './components/MainPage'
 import SignUp from './components/Signup'
+import ShowRefrigerator from './components/ShowRefrigerator'
 import { Navbar as Navigationbar, Nav as Navigation, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.css'
 import { PublicRoute } from './Utils/PublicRoute'
@@ -22,7 +23,10 @@ function App() {
   const [loggingIn, setLoggingIn] = useState(false);
 
   const updateLoggedIn = () => {
-    setLoggingIn(loggingIn ? false : true);
+    
+    const loggedOut = loggingIn ? false : true;
+    console.log(loggedOut);
+    setLoggingIn(loggedOut);
   }
 
   return (
@@ -53,16 +57,16 @@ function App() {
           <PublicRoute updateLoggedIn={updateLoggedIn} exact path="/login" component={Login} />
           <PublicRoute updateLoggedIn={updateLoggedIn} exact path="/signup" component={SignUp} />
           <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/logout" component={Logout} />
-          <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/main" component={MainPage} />
-
-          <Route exact path="/">
+          <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/" component={MainPage} />
+          <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/refrigerator/:id" component={ShowRefrigerator} />
+          {/* <Route exact path="/">
             <div className="App">
 
               <header className="App-header">
                 <img src={logo} className="App-logo" alt="logo" />
                 <p>
                   Edit <code>src/App.js</code> and save to reload.
-        </p>
+                </p>
                 <a
                   className="App-link"
                   href="https://reactjs.org"
@@ -70,11 +74,11 @@ function App() {
                   rel="noopener noreferrer"
                 >
                   Learn React
-        </a>
+             </a>
               </header>
             </div>
 
-          </Route>
+          </Route> */}
 
         </Switch>
       </Router>

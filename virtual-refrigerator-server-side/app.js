@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const { hashPassword } = require('./utils');
 const commonQueries = require('./mysql/commonQueries')
 //const SECRETKEY= "secret";
-
+const cors = require('cors');
 
 const app = express();
 
@@ -23,7 +23,8 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
- 
+app.use(cors());
+app.options('*', cors());
  //app.use(express.static(environmentRoot + ''));
 
 app.get("/api",(req,res)=>{
@@ -51,10 +52,12 @@ app.post("/api/login",async (req,res)=>{
     }  
     delete userInfo.user.password;
     jwt.sign({user: userInfo.user},
-    constants.SECRETKEY,{expiresIn : constants.EXPIRATIONTIME },(err,token)=>{
+    constants.SECRETKEY,{expiresIn : constants.EXPIRATIONTIME },async (err,token)=>{
+       const data = await jwt.verify(token,constants.SECRETKEY)
         res.json({
             type:"bearer",
-            token : token
+            token : token,
+            info : data
         });   
     });
     }

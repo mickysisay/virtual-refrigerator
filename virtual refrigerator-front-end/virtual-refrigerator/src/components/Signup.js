@@ -238,7 +238,7 @@ export default class SignUp extends React.Component {
 
                 <div>{this.state.isLoading ? <LoadingButton /> : null}</div>
                 <div className=" login-bar">
-                    <MDBContainer className="align-middle">
+                    <MDBContainer className="align-middle mt-5">
                         <MDBRow>
                             <MDBCol md="6">
                                 <MDBCard>
