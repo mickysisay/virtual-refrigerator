@@ -127,6 +127,25 @@ const signupRequest = async (state) =>{
     const response = await postRequestsWithToken(endpoint,data);
     return response;
 }
+const getPersonalItemWithBarcode = async (barCode) =>{
+    const endpoint = APPURL + "personal_item";
+    const data = {
+        "bar_code" : barCode
+    }
+    const response = await getRequestsWithToken(endpoint,data);
+    return response;
+}
+const addPersonalItem = async (itemInformation) =>{
+    const itemName = itemInformation["item_name"];
+    const barCode = itemInformation["bar_code"];
+    const data ={
+        "item_name": itemName,
+        "bar_code" : barCode
+    }
+    const endpoint = APPURL + "personal_item/add";
+    const response = await postRequestsWithToken(endpoint,data);
+    return response;
+}
 const backendAPI = {
     postRequestsWithToken : postRequestsWithToken,
     getRequestsWithToken : getRequestsWithToken,
@@ -136,7 +155,9 @@ const backendAPI = {
     getAllRefrigetors:getAllRefrigetors,
     deleteRefrigerator : deleteRefrigerator,
     addRefrigerator :addRefrigerator,
-    updateRefrigerator : updateRefrigerator
+    updateRefrigerator : updateRefrigerator,
+    getPersonalItemWithBarcode :getPersonalItemWithBarcode,
+    addPersonalItem : addPersonalItem
 }
 
 export default backendAPI;

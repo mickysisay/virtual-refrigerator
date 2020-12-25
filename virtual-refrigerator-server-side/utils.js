@@ -294,6 +294,62 @@ class BasicUtils {
         const response = await commonQueries.getAllItemsInRefrigerator(refrigeratorId);
         res.json({status:true,message:response});
     }
+    static async addPersonalItem (req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const personalItemInfo = req.body;
+        if(typeof personalItemInfo["item_name"] !== "string"){
+            res.status(400).json({status:false,message:"item name doesn't exist"});
+            return;
+        }
+        if(personalItemInfo["item_name"].trim() ===""){
+            res.status(400).json({status:false,message:"item name doesn't exist"});
+            return;
+        }
+        if(typeof personalItemInfo["bar_code"] === "string"){
+        const personalItem = await commonQueries.getPersonalItemByOwnerIdAndbarCode(data.user.id,personalItemInfo["bar_code"]);
+            if(personalItem.length !=0){
+                res.status(402).json({status:false,message:"item already exists"});
+                return;
+            }
+        }
+        personalItemInfo["owner_id"]= data.user.id;
+        personalItemInfo["id"] = this.createUniqueId();
+        const response = await commonQueries.addPersonalItem(personalItemInfo);
+        res.json({status:response.success,message:response.response});
+    }
+    static async deletePersonalItem(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const personalItemId = req.body["id"];
+        const response  = await commonQueries.deletePersonalItem(personalItemId, data.user.id);
+        if(!response.success){
+            res.status(404).json({status:false,message:"no personal item found"});
+            return;
+        }
+        res.json({status:response.success,message:response.response});
+
+    }
+    static async getPersonalItem(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const barCode = req.body["bar_code"];
+        const response = await commonQueries.getPersonalItemByOwnerIdAndbarCode(data.user.id,barCode);
+        if(response.length === 0){
+            res.status(404).json({status:false,message:"no personal item found"});
+            return;
+        }
+        res.json({status:true,message:response[0]});
+    }
     static async canUserAddToRefrigerator(userId,refrigeratorId){
       //check if user is an owner of refrigerator
         const response =await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId);

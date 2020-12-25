@@ -265,6 +265,91 @@ const getAllItemsInRefrigerator = async (refrigeratorId)=>{
     result = JSON.parse(result);
     return result;
 }
+const getPersonalItemByOwnerIdAndbarCode = async (ownerId,barCode)=>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `personal_items` WHERE `owner_id` = ? AND `bar_code` = ?  ',
+        timeout: 40000,
+        values:[ownerId,barCode]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
+const getAllPersonalItemsByOwnerId = async (ownerId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `personal_items` WHERE `owner_id` = ?',
+        timeout: 40000,
+        values:[ownerId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
+const addPersonalItem = async (personalItemInformation) =>{
+    const id = personalItemInformation["id"];
+    const itemName = personalItemInformation["item_name"];
+    const ownerId = personalItemInformation["owner_id"];
+    const barCode = personalItemInformation["bar_code"];
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql:'INSERT INTO `personal_items` (`id`,`item_name`,`owner_id`,`bar_code`) VALUES (?,?,?,?)',
+        timeout : 40000,
+        values:[id,itemName,ownerId,barCode]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    const resultItems = await getAllPersonalItemsByOwnerId(ownerId);
+    console.log(result);
+    return {success:result.affectedRows !==0, response:resultItems};
+}
+const deletePersonalItem = async (personalItemId, ownerId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'DELETE FROM `personal_items` WHERE `id` = ? AND `owner_id` = ? ',
+        timeout: 40000,
+        values:[personalItemId,ownerId]
+    });
+   
+    result = JSON.stringify(result);
+    result = JSON.parse(result); 
+    let resultItems=[];
+    if(result.affectedRows !== 0){
+         resultItems = await query({
+            sql : 'SELECT * FROM `personal_items` WHERE `owner_id` = ?  ',
+            timeout: 40000,
+            values:[ownerId]
+        });
+        resultItems = JSON.stringify(resultItems);
+        resultItems = JSON.parse(resultItems);  
+    } 
+    connection.end();
+    return {success:result.affectedRows !== 0,response : resultItems};
+}
 module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
@@ -278,5 +363,9 @@ module.exports = {
     updateRefrigeratorByUserIdAndRefrigerator : updateRefrigeratorByUserIdAndRefrigerator,
     addNewItem : addNewItem,
     deleteItem : deleteItem,
-    getAllItemsInRefrigerator : getAllItemsInRefrigerator
+    getAllItemsInRefrigerator : getAllItemsInRefrigerator,
+    getPersonalItemByOwnerIdAndbarCode:getPersonalItemByOwnerIdAndbarCode,
+    getAllPersonalItemsByOwnerId:getAllPersonalItemsByOwnerId,
+    addPersonalItem:addPersonalItem,
+    deletePersonalItem:deletePersonalItem
 }
