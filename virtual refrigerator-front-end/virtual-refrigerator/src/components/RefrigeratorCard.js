@@ -8,7 +8,7 @@ import en from 'javascript-time-ago/locale/en'
 import backendAPI from '../Utils/backendAPI'
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import  EditRefrigratorModal from './EditRefrigeratorModal'
+
 
 TimeAgo.addDefaultLocale(en)
 const timeAgo = new TimeAgo('en-US');
@@ -102,7 +102,7 @@ export default class RefrigeratorCard extends React.Component {
                         </Modal.Header>
 
                         <Modal.Body>
-                <p>Are you sure you want to delete "{this.state.refrigerator["refrigerator_name"]}"?</p>
+                <p>Are you sure you want to delete "{this.editedRefrigerator}"?</p>
                         </Modal.Body>
 
                          <Modal.Footer>
@@ -137,7 +137,7 @@ export default class RefrigeratorCard extends React.Component {
                     <Card.Link > Delete</Card.Link>
                 </MDBIcon>
                 <MDBIcon icon="pencil-alt" >
-                <Card.Link onClick={() => { this.updateRefrigeratorModal()}}> Update</Card.Link>
+                <Card.Link onClick={() => { this.updateRefrigeratorModal()}}> Rename</Card.Link>
              </MDBIcon>
             </Card.Body>
         </Card>);

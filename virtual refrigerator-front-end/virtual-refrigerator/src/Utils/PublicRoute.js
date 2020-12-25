@@ -1,18 +1,14 @@
-import {Component,PropTypes} from "react";
-import {  BrowserRouter as Router,
-    Switch,
+
+import { 
     Route,
-    Link,
-    Redirect,
-    history ,
-    useHistory,
-    useLocation} from 'react-router-dom'
+    Redirect
+ } from 'react-router-dom'
 import {isAuthorized} from './AuthenticatedRoute'    
 
     export const PublicRoute = ({ component: Component, ...rest }) => (
         <Route {...rest} render={(props) => (
           isAuthorized()
-            ? <Redirect to= "main" />
+            ? <Redirect to= "" />
             : <Component updateLoggedIn = {rest.updateLoggedIn}  {...props}
                />
         )} />

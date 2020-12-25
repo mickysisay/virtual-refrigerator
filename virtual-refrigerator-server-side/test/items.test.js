@@ -1,5 +1,5 @@
 const request= require('supertest');
-const app = require('../app');
+const app = require('../controllers/items');
 const commonQueries = require('../mysql/commonQueries')
 const { test, expect,describe } = require('@jest/globals');
 const BasicUtils = require('../utils');

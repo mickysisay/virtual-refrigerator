@@ -1,6 +1,4 @@
 import React from "react";
-
-import Requests from "../Utils/Requests"
 import LoadingButton from "./LoadingButton"
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBIcon, MDBModalFooter } from 'mdbreact';
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -10,7 +8,7 @@ import './login.css'
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import backendAPI from '../Utils/backendAPI'
-
+import LoadingOverlay from 'react-loading-overlay';
 export default class Login extends React.Component {
 
     constructor(props) {
@@ -123,7 +121,7 @@ export default class Login extends React.Component {
         //resp has statusCode and message and status
         const statusCode = resp.statusCode;
         const message = resp.message.message;
-        let referrer = "main";
+        let referrer = "";
         try {
             referrer = this.props.location.state.referrer;
         } catch (ex) { };
@@ -133,6 +131,7 @@ export default class Login extends React.Component {
             localStorage.setItem("token", token);
             this.props.updateLoggedIn();
             this.props.history.push(referrer);
+           
             //redirect to other route
         } else {
             //display error message
@@ -142,8 +141,13 @@ export default class Login extends React.Component {
                     message: message
                 }
             });
+          
         }
-        this.setState({ isLoading: false });
+      
+       
+            this.setState({ isLoading: false });
+
+      
 
 
 
@@ -166,16 +170,24 @@ export default class Login extends React.Component {
     }
 
     render() {
+        return ( <LoadingOverlay
+            active={this.state.isLoading}
+            spinner
+                text='Loading your content...'
+        ><div>
 
-        return (<div>
-
-            <div>{this.state.isLoading ? <LoadingButton /> : null}</div>
+            {/* <div>{!this.state.isLoading ? 
+            //<div>loading</div>
+            
+            <LoadingButton />
+             : null}</div> */}
+            
             <div className=" login-bar">
-                <MDBContainer className="align-middle mt-5"  >
-                    <MDBRow>
+                <MDBContainer className=" mt-5"  >
+                    <MDBRow className="align-middle align-items-center justify-content-center mt-5">
                         <MDBCol md="6">
-                            <MDBCard>
-                                <MDBCardBody>
+                            <MDBCard >
+                                <MDBCardBody >
                                     <MDBCardHeader className="form-header deep-blue-gradient rounded">
                                         <h3 className="my-3">
                                             <MDBIcon icon="lock" /> Login:
@@ -194,7 +206,9 @@ export default class Login extends React.Component {
                                             <MDBInput label="password" icon="lock" group type="password" validate
                                                 id="password" onChange={(e) => { this.handleInputChange(e) }}
                                                 onBlur={(e) => { this.handleBlurPassword(e) }} 
-                                                data-testid="password"/>
+                                                data-testid="password">
+                                               
+                                                </MDBInput>
                                             <p
                                             data-testid = "passwordError"
                                             className="error-message">{this.state.password.error}</p>
@@ -219,8 +233,8 @@ export default class Login extends React.Component {
                 <NotificationContainer />
             </div>
 
-
-        </div>);
+           
+        </div> </LoadingOverlay>);
     };
 
 }

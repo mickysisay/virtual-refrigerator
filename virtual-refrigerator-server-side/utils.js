@@ -3,7 +3,7 @@ const constants = require('./constants');
 const bcrypt = require('bcrypt');
 const { v1: uuidv1 } = require('uuid');
 const commonQueries = require('./mysql/commonQueries');
-
+const moment = require('moment');
 
 class BasicUtils {
 
@@ -203,9 +203,101 @@ class BasicUtils {
             return;
         }else{
             res.status(200).json({status:true,message:"refrigerator deleted succesfully"});
+        }  
+    }
+    static async addItemToRefrigerator(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
         }
-        
-
+        const itemInformation = req.body;
+        if(typeof itemInformation["item_name"]!== "string" ){
+            res.status(400).json({status:false,message:"item name doesn't exist"});
+            return;
+        }
+        if(itemInformation["item_name"].trim() === ""){
+            res.status(400).json({status:false,message  : "item name can't be empty"});
+            return;
+        }
+        if(itemInformation["expiration_date"]){
+            //check if its a number
+            if(typeof itemInformation["expiration_date"] !== 'number'){
+                res.status(400).json({status:false,message:"expiration date is not a number"});
+                return;
+            }
+            //check if date is after today
+            if(Date.now() >= itemInformation["expiration_date"]){
+                res.status(400).json({status:false,message:"expiration date should be older than today"});
+                return;
+            }
+            itemInformation["expiration_date"] =  moment(itemInformation["expiration_date"]).format();
+        }
+        if(typeof itemInformation["quantity"]=== "number"){
+            if(itemInformation["quantity"] <=0){
+                res.status(400).json({status : false, message:"quantity can't be less than 1"});
+                return
+            }
+        }else{
+            itemInformation["quantity"] = 1;
+        }
+        const userId = data.user.id;
+        const refrigeratorId = itemInformation["refrigerator_id"];
+        const canUserAdd = await this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!canUserAdd){
+            res.status(403).json({status:false, message:"User doesn't have access to refrigeratpr"});
+            return;
+        }
+        itemInformation["id"] = this.createUniqueId();
+        const response = await commonQueries.addNewItem(itemInformation);
+        res.json({status:true, message: response.response});
+    }
+    static async deleteItem(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const itemId = req.body["id"];
+        const refrigeratorId = req.body["refrigerator_id"];
+        if(typeof itemId !== "string" || typeof refrigeratorId !== "string"){
+            res.status(400).json({status:false, message : "item id or refrigerator id is not valid"});
+            return;
+        }
+        //check if user has access to refrigerator
+        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!hasAccess){
+            res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
+            return;
+        }
+        const deleteResponse = await commonQueries.deleteItem(itemId,refrigeratorId);
+        if(!deleteResponse.success){
+            res.status(400).json({status:false,message:"item not valid"});
+            return;
+        }
+        res.json({status:true,message:deleteResponse.response});
+    }
+    static async getAllItems(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const refrigeratorId = req.params.id;;
+        const userId= data.user.id;
+        const hasAccess = await this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!hasAccess){
+            res.status(403).json({status:false, message:"User doesnot have access to refrigerator"});
+            return;
+        }
+        const response = await commonQueries.getAllItemsInRefrigerator(refrigeratorId);
+        res.json({status:true,message:response});
+    }
+    static async canUserAddToRefrigerator(userId,refrigeratorId){
+      //check if user is an owner of refrigerator
+        const response =await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId);
+        return response.length !==0;
     }
 }
 

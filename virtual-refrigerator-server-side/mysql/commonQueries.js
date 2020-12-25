@@ -190,6 +190,81 @@ const updateRefrigeratorByUserIdAndRefrigerator = async (userId,refrigeratorId,r
     result = JSON.parse(result);  
     return result;
 }
+const addNewItem = async (itemInformation) =>{
+    const id = itemInformation["id"];
+    const itemName = itemInformation["item_name"];
+    const expirationDate = itemInformation["expiration_date"];
+    const quantity = itemInformation["quantity"] ? itemInformation["quantity"] : 1;
+    const status = 'NORMAL';
+    const refrigeratorId = itemInformation["refrigerator_id"];
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql:'INSERT INTO `items` (`id`,`item_name`,`expiration_date`,`quantity`,`status`,`refrigerator_id`) VALUES (?,?,?,?,?,?)',
+        timeout : 40000,
+        values:[id,itemName,expirationDate,quantity,status,refrigeratorId]
+    });
+    let resultItems = await query({
+        sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ?  ',
+        timeout: 40000,
+        values:[refrigeratorId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    resultItems = JSON.stringify(resultItems);
+    resultItems = JSON.parse(resultItems);  
+    return {success:result.length,response : resultItems};
+}
+const deleteItem = async (itemId,refrigeratorId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'DELETE FROM `items` WHERE `id` = ? AND `refrigerator_id` = ? ',
+        timeout: 40000,
+        values:[itemId,refrigeratorId]
+    });
+   
+    result = JSON.stringify(result);
+    result = JSON.parse(result); 
+    let resultItems=[];
+    if(result.affectedRows !== 0){
+         resultItems = await query({
+            sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ?  ',
+            timeout: 40000,
+            values:[refrigeratorId]
+        });
+        resultItems = JSON.stringify(resultItems);
+        resultItems = JSON.parse(resultItems);  
+    } 
+    connection.end();
+    return {success:result.affectedRows !== 0,response : resultItems};
+}
+const getAllItemsInRefrigerator = async (refrigeratorId)=>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ?  ',
+        timeout: 40000,
+        values:[refrigeratorId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
 module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
@@ -200,5 +275,8 @@ module.exports = {
     addRefrigerator:addRefrigerator,
     getRefrigeratorByUserIdAndRefrigeratorId:getRefrigeratorByUserIdAndRefrigeratorId,
     deleteRefrigeratorByUserIdAndRefrigeratorId :deleteRefrigeratorByUserIdAndRefrigeratorId,
-    updateRefrigeratorByUserIdAndRefrigerator : updateRefrigeratorByUserIdAndRefrigerator
+    updateRefrigeratorByUserIdAndRefrigerator : updateRefrigeratorByUserIdAndRefrigerator,
+    addNewItem : addNewItem,
+    deleteItem : deleteItem,
+    getAllItemsInRefrigerator : getAllItemsInRefrigerator
 }

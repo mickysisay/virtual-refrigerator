@@ -38,7 +38,7 @@ export default class AddRefrigeratorModal extends React.Component{
         customUI: ({ onClose }) => {
             return (
                
-                 <Modal.Dialog>
+                 <Modal.Dialog data-testid = "addRefrigeratorModal">
                 
     
                  <Modal.Header closeButton onClick = {onClose}>
@@ -66,7 +66,7 @@ export default class AddRefrigeratorModal extends React.Component{
  
        return (
         <Grid container direction="row" className='mt-5'>
-       <Button variant="secondary" size="lg" block
+       <Button data-testid="addRefrigeratorButton" variant="secondary" size="lg" block
         onClick = {this.addRefrigeratorModal}
        >
         Add Refrigerator

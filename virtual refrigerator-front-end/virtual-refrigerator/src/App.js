@@ -1,5 +1,4 @@
 
-import logo from './logo.svg';
 import './App.css';
 import Login from './components/Login'
 import { AuthenticatedRoute, isAuthorized } from './Utils/AuthenticatedRoute'
@@ -13,7 +12,6 @@ import { PublicRoute } from './Utils/PublicRoute'
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
 } from 'react-router-dom'
 import { Fragment, useState } from 'react';
 
@@ -32,7 +30,7 @@ function App() {
   return (
     <Fragment>
       <Navigationbar bg="dark" variant="dark">
-        <Navigationbar.Brand href="/">Home</Navigationbar.Brand>
+        <Navigationbar.Brand data-testid="homeButton" href="/">Home</Navigationbar.Brand>
         <Navigation className="mr-auto">
 
         </Navigation>
