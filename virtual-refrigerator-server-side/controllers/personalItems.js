@@ -17,4 +17,8 @@ app.get("/api/personal_item",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.getPersonalItem(req,res);
 });
 
+app.get("/api/personal_item/all",basicUtils.verifyToken,async (req,res)=>{
+    await basicUtils.getAllPersonalItems(req,res);
+});
+
 module.exports = app;

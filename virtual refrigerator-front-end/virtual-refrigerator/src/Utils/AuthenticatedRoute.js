@@ -9,7 +9,7 @@ export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
       isAuthorized()
             ? <Component updateLoggedIn={rest.updateLoggedIn} {...props} />
             : <Redirect to={{
-                pathname: "login",
+                pathname: "/login",
                 state: { referrer: rest.path }
             }} />
     )} />

@@ -350,6 +350,15 @@ class BasicUtils {
         }
         res.json({status:true,message:response[0]});
     }
+    static async getAllPersonalItems(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        } 
+        const response = await commonQueries.getAllPersonalItemsByOwnerId(data.user.id);
+        res.json({status:true,message:response});
+    }
     static async canUserAddToRefrigerator(userId,refrigeratorId){
       //check if user is an owner of refrigerator
         const response =await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId);

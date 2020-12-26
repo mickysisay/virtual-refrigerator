@@ -10,3 +10,32 @@
     width: 500px !important;    
     max-width: 90vw;
 } 
+.personal-Item {
+    border-style: solid; 
+    border-radius : 5px;
+    padding: 10px;
+    box-shadow: 5px 10px #888888;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    margin-Top:20px
+}
+
+.personal-Items{
+    float:left;
+    width:300px;
+    
+}
+.border-radius{
+    display:none;
+}
+#outPopUp {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    z-index: 15;
+    top: 35%;
+    left: 40%;
+    margin: -100px 0 0 -150px;
+  }
+

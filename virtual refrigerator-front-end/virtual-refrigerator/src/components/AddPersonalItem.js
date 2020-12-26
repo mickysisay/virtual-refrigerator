@@ -7,6 +7,7 @@ import { MDBInput,MDBInputGroup } from "mdbreact";
 import 'bootstrap/dist/css/bootstrap.css'
 import { Button,Modal} from 'react-bootstrap';
 import { confirmAlert } from 'react-confirm-alert';
+import './login.css'
 
 export default class AddPersonalItem extends React.Component {
     constructor(props){
@@ -40,9 +41,10 @@ export default class AddPersonalItem extends React.Component {
         console.log(response);
         if(response.statusCode === 200 ){
             NotificationManager.success('Success message', "personal item added succesfully", 1000, () => {
-                alert('callback');
-                this.props.onClose();
+                alert('callback');  
             });
+            this.props.setPersonalItems(response.message.message);
+            setTimeout(()=>{ this.props.onClose();},1000);
         }else{
             NotificationManager.error('Error message', response.message.message, 1000, () => {
                 alert('callback');
@@ -55,19 +57,7 @@ export default class AddPersonalItem extends React.Component {
             itemName : e.target.value 
         });
     }
-    startScanner = (e) =>{
-        confirmAlert({
-            customUI: ({ onClose }) => {
-                return (
-                    <div onClick= {()=>{
-                        console.log("close");
-                        onClose()}} className="align-middle align-items-center justify-content-center mt-5">
-                    <ItemScanner setBarCode = {this.setBarCode}/>      
-                   </div>
-                );
-            }
-        });
-    }
+   
     changeisScannerOn = (bool) =>{
        
         this.setState({
@@ -115,13 +105,11 @@ export default class AddPersonalItem extends React.Component {
             {/* <ItemScanner setBarCode = {this.setBarCode}/> */}
             <NotificationContainer /></div>);
         }else{
-            return( <div  className="align-middle align-items-center justify-content-center mt-5">
-           <Button onClick = {()=>{
+            return( <div id="outPopUp" onClick = {()=>{
                 console.log("close");
                 this.clickChild()
-                this.changeisScannerOn(false)}}>Cancel</Button>    
-            <ItemScanner setCloseCamera = {(e)=>{
-                console.log(e);
+                this.changeisScannerOn(false)}}>   
+                 <ItemScanner  setCloseCamera = {(e)=>{
                 this.clickChild = e} }  setBarCode = {this.setBarCode} changeisScannerOn = 
                 {this.changeisScannerOn}/> 
                  

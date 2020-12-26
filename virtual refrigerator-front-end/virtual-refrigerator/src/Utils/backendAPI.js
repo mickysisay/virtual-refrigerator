@@ -135,6 +135,11 @@ const getPersonalItemWithBarcode = async (barCode) =>{
     const response = await getRequestsWithToken(endpoint,data);
     return response;
 }
+const getAllPersonalItems = async () =>{
+   const endpoint = APPURL +"personal_item/all";
+   const response = await getRequestsWithToken(endpoint);
+   return response;
+}
 const addPersonalItem = async (itemInformation) =>{
     const itemName = itemInformation["item_name"];
     const barCode = itemInformation["bar_code"];
@@ -157,7 +162,8 @@ const backendAPI = {
     addRefrigerator :addRefrigerator,
     updateRefrigerator : updateRefrigerator,
     getPersonalItemWithBarcode :getPersonalItemWithBarcode,
-    addPersonalItem : addPersonalItem
+    addPersonalItem : addPersonalItem,
+    getAllPersonalItems : getAllPersonalItems
 }
 
 export default backendAPI;

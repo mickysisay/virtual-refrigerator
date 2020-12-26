@@ -1,7 +1,7 @@
 import React from "react";
 import Quagga from 'quagga';
 import {orderByFrequency} from "../Utils/Constants"
-
+import './login.css'
 
 export default class ItemScanner extends React.Component {
     constructor(props){
@@ -11,6 +11,7 @@ export default class ItemScanner extends React.Component {
         }
     }
     closeCamera = async () =>{
+        Quagga.offDetected();
        Quagga.stop();    
     }
     
@@ -24,16 +25,23 @@ export default class ItemScanner extends React.Component {
        
       if (navigator.mediaDevices && typeof  navigator.mediaDevices.getUserMedia === 'function'
       ) {
+          
         if(Quagga.intialize === undefined){
+         const video = document.getElementById("scannerIndicator");
             Quagga.onDetected(async (result)=>{ 
                 const lastCode = result.codeResult.code;
-                console.log(lastCode);
+                if(video.classList.contains('border-radius')){
+                    video.classList.remove('border-radius');
+                    setTimeout(()=>{
+                        video.classList.add("border-radius")},1000);
+            }
                 results.push(lastCode);
                 if(results.length === 20){
                 let code = await orderByFrequency(results);   
                 this.props.setBarCode(code);
                 // await this.getItemFromBackend(code);
                  results = [];
+                 Quagga.offDetected();
                  Quagga.stop();
                  this.props.changeisScannerOn(false);
                  scanner.innerHTML = "";
@@ -72,7 +80,12 @@ export default class ItemScanner extends React.Component {
     
 
     render(){
-        return (<div><div id="item-scanner"></div>
-        </div>);
+        return (<div>
+            <div id="scannerIndicator" className="border-radius">Scanning ... </div>
+        <div id="item-scanner">
+            
+        </div>
+        </div>
+        );
     }
 }
