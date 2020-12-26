@@ -71,7 +71,7 @@ export default class AddPersonalItem extends React.Component {
                 
     
                 <Modal.Header closeButton onClick = {this.props.onClose}>
-                       <Modal.Title>Add Refrigerator</Modal.Title>
+                       <Modal.Title>Add Personal Item</Modal.Title>
                    </Modal.Header>
 
                    <Modal.Body>
@@ -105,10 +105,11 @@ export default class AddPersonalItem extends React.Component {
             {/* <ItemScanner setBarCode = {this.setBarCode}/> */}
             <NotificationContainer /></div>);
         }else{
-            return( <div id="outPopUp" onClick = {()=>{
+            return( <div id="outPopUp" >   
+                <Button variant="primary" onClick = {()=>{
                 console.log("close");
                 this.clickChild()
-                this.changeisScannerOn(false)}}>   
+                this.changeisScannerOn(false)}}>Cancel</Button>
                  <ItemScanner  setCloseCamera = {(e)=>{
                 this.clickChild = e} }  setBarCode = {this.setBarCode} changeisScannerOn = 
                 {this.changeisScannerOn}/> 

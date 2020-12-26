@@ -24,6 +24,9 @@
     font-size: 1.5vw;
     
 }
+.form-control-sm::-webkit-input-placeholder{
+    font-size:1.5vw;
+}
 .personal-Item:hover{
     box-shadow: 5px 10px #888888;
 }
@@ -37,12 +40,13 @@
     float:left;
     width:30%;
     overflow:hidden;
-    font-size: 1.5vw;
+    font-size: 1.5vw ;
     border-style: none;
 }
 .refrigerator-items{
     float:right;
-    width:60%
+    width:60%;
+    font-size: 1.5vw;
 }
 .fluid-font{
     font-size: 2vw;
@@ -59,4 +63,14 @@
     left: 40%;
     margin: -100px 0 0 -150px;
   }
-
+.react-confirm-alert-overlay{
+    pointer-events: none
+}
+.react-confirm-alert{
+    pointer-events: all;
+}
+ 
+.add-buttons {
+    font-size:1.2vw !important;
+    margin-bottom:10px !important;
+}

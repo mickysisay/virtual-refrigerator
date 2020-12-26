@@ -98,7 +98,7 @@ export default class ShowRefrigerator extends React.Component{
          aria-label="Search"
          onChange = {this.filterPersonalItems} />
       </MDBFormInline>
-          <Button block  onClick = {()=>{this.createAddItemModal()}}>Add</Button>
+          <Button block className="add-buttons"  onClick = {()=>{this.createAddItemModal()}}>Add Personal Item</Button>
             {
             this.state.filteredPersonalItems.length !== 0 ?
             this.state.filteredPersonalItems.map((e)=>{ 
