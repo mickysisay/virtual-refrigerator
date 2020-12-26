@@ -12,19 +12,40 @@
 } 
 .personal-Item {
     border-style: solid; 
+    border-width: thin;
     border-radius : 5px;
     padding: 10px;
-    box-shadow: 5px 10px #888888;
+    box-shadow: 2px 4px #888888;
     overflow: hidden;
     display: flex;
     justify-content: space-between;
-    margin-Top:20px
+    margin-bottom:20px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.5vw;
+    
 }
-
+.personal-Item:hover{
+    box-shadow: 5px 10px #888888;
+}
+.right{
+    margin-left:10px;
+}
+.left{
+    overflow: hidden;
+}
 .personal-Items{
     float:left;
-    width:300px;
-    
+    width:30%;
+    overflow:hidden;
+    font-size: 1.5vw;
+    border-style: none;
+}
+.refrigerator-items{
+    float:right;
+    width:60%
+}
+.fluid-font{
+    font-size: 2vw;
 }
 .border-radius{
     display:none;
