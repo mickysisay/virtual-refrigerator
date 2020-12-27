@@ -3,6 +3,7 @@ import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import './login.css'
+import { Card} from 'react-bootstrap';
 import { MDBIcon } from 'mdbreact';
 export default class RefrigeratorItemShow extends React.Component {
     constructor(props){      
@@ -18,16 +19,19 @@ export default class RefrigeratorItemShow extends React.Component {
         }  
     }
     render(){
-        return (<div className = "personal-Item"  onClick = {(e)=>{console.log("whole")}}>
-            <div className="left">
-            {this.state.item_name}
-            </div>
-            <div className="right">
-            <MDBIcon onClick={(e)=>{e.stopPropagation();console.log("trash")}} icon="trash-alt" className='mr-2' >
+        return (
+            <Card className = "refrigerator-item" style={{ width: '13vw' }}  onClick = {(e)=>{console.log("whole")}}>
+            <Card.Body>
+                <Card.Title>{this.state.item_name} </Card.Title>
+            </Card.Body>
+
+            <Card.Body className="either-end">
+            <MDBIcon  onClick={(e)=>{e.stopPropagation();console.log("trash")}} icon="trash-alt" className='mr-5' >
                 </MDBIcon>
-            <MDBIcon onClick={(e)=>{e.stopPropagation();console.log("pencil")}} icon="pencil-alt" className='mr-1' >
+                <MDBIcon onClick={(e)=>{e.stopPropagation();console.log("pencil")}} icon="pencil-alt" className='mr-4' >
                 </MDBIcon>
-             </div>
-        </div>);
+            </Card.Body>
+        </Card>
+        );
     }
 }

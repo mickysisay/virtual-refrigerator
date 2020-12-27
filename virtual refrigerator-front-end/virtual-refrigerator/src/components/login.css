@@ -24,10 +24,19 @@
     font-size: 1.5vw;
     
 }
+.refrigerator-item{
+    margin: 2vw;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.5vw;
+    box-shadow: 2px 4px #888888;
+}
 .form-control-sm::-webkit-input-placeholder{
     font-size:1.5vw;
 }
 .personal-Item:hover{
+    box-shadow: 5px 10px #888888;
+}
+.refrigerator-item:hover{
     box-shadow: 5px 10px #888888;
 }
 .right{
@@ -36,10 +45,37 @@
 .left{
     overflow: hidden;
 }
-.personal-Items{
-    float:left;
+.either-end{
+    display: flex;
+    justify-content:space-between ;
+}
+.side-bar{
     width:30%;
-    overflow:hidden;
+    display: block;
+    padding:2vw;
+    height:100% !important;
+}
+.home-button{
+    display: flex;
+    justify-content: center;
+    font-size: 2vw;
+    cursor:pointer;
+    color:black;
+    border: 1px solid black;
+    box-shadow: 2px 4px #888888;
+}
+.home-button>a:hover{
+   
+    text-decoration: none;
+}
+.home-button:hover{
+    box-shadow: 5px 10px #888888;
+}
+.side-bar > a {
+    align-self:center;
+}
+.personal-Items{
+    
     font-size: 1.5vw ;
     border-style: none;
 }

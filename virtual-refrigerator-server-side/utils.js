@@ -241,6 +241,9 @@ class BasicUtils {
         }else{
             itemInformation["quantity"] = 1;
         }
+        if(typeof itemInformation["bar_code"] !== "string"){
+            itemInformation["bar_code"] = "";
+        }
         const userId = data.user.id;
         const refrigeratorId = itemInformation["refrigerator_id"];
         const canUserAdd = await this.canUserAddToRefrigerator(userId,refrigeratorId);
@@ -342,7 +345,15 @@ class BasicUtils {
             res.status(400).json({status:false,message:"no user found with that jwt token"});
             return;
         }
-        const barCode = req.body["bar_code"];
+        const barCode = req.query.bar_code;
+        if(typeof barCode !== "string"){
+            res.status(400).json({status:false,message:"not a valid barcode"});
+            return;
+        }
+        if(barCode.trim().length === 0){
+            res.status(400).json({status:false,message:"not a valid barcode"});
+            return;
+        }
         const response = await commonQueries.getPersonalItemByOwnerIdAndbarCode(data.user.id,barCode);
         if(response.length === 0){
             res.status(404).json({status:false,message:"no personal item found"});

@@ -10,12 +10,13 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 
-TimeAgo.addDefaultLocale(en)
-const timeAgo = new TimeAgo('en-US');
 
+TimeAgo.addLocale(en)
+const timeAgo = new TimeAgo('en-US');
 export default class RefrigeratorCard extends React.Component {
     editedRefrigerator = "";
-    
+     
+
     constructor(props) {
         super(props);
         this.state = {
@@ -23,6 +24,7 @@ export default class RefrigeratorCard extends React.Component {
             changeState:true
             
         }
+       
         this.editedRefrigerator = props.refrigerator["refrigerator_name"];
 
     }

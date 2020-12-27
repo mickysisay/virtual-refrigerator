@@ -197,6 +197,7 @@ const addNewItem = async (itemInformation) =>{
     const quantity = itemInformation["quantity"] ? itemInformation["quantity"] : 1;
     const status = 'NORMAL';
     const refrigeratorId = itemInformation["refrigerator_id"];
+    const barCode = itemInformation["bar_code"];
     let connection = openConnection();
     if(!connection){
         console.log();
@@ -204,9 +205,9 @@ const addNewItem = async (itemInformation) =>{
     }
     const query = util.promisify(connection.query).bind(connection);
     let result = await query({
-        sql:'INSERT INTO `items` (`id`,`item_name`,`expiration_date`,`quantity`,`status`,`refrigerator_id`) VALUES (?,?,?,?,?,?)',
+        sql:'INSERT INTO `items` (`id`,`item_name`,`expiration_date`,`quantity`,`status`,`refrigerator_id`,`bar_code`) VALUES (?,?,?,?,?,?,?)',
         timeout : 40000,
-        values:[id,itemName,expirationDate,quantity,status,refrigeratorId]
+        values:[id,itemName,expirationDate,quantity,status,refrigeratorId,barCode]
     });
     let resultItems = await query({
         sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ?  ',
