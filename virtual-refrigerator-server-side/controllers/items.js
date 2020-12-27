@@ -21,4 +21,8 @@ app.post("/api/item/edit",basicUtils.verifyToken,async (req,res)=>{
 app.get("/api/item/",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.getItemUsingRefrigeratorIdAndBarCode(req,res);
 });
+//subtract item qunatity using refrigeratorId, itemId and quantity
+app.post("/api/item/take",basicUtils.verifyToken,async (req,res)=>{
+    await basicUtils.takeItemOutOfRefrigerator(req,res);
+});
 module.exports = app;

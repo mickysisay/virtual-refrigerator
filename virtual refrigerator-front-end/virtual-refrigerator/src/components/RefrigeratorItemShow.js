@@ -6,9 +6,8 @@ import './login.css'
 import { Card, Button,Modal } from 'react-bootstrap';
 import { MDBIcon,MDBInput } from 'mdbreact';
 import { confirmAlert } from 'react-confirm-alert';
-import DateTimePicker from 'react-datetime-picker';
 import EditRefrigeratorItem from './EditRefrigeratorItem'
-
+import TakeItem from './TakeItem'
 
 export default class RefrigeratorItemShow extends React.Component {
     constructor(props){      
@@ -73,7 +72,6 @@ export default class RefrigeratorItemShow extends React.Component {
     }
 
     confirmDelete = () => {
-        
         confirmAlert({
             customUI: ({ onClose }) => {
                 return (
@@ -97,11 +95,20 @@ export default class RefrigeratorItemShow extends React.Component {
             }
         });
     }
+    takeItemOut = () =>{
+        confirmAlert({
+            customUI: ({ onClose }) => {
+                return (
+                <TakeItem onClose = {onClose} setItem = {this.props.setItem} item={this.state.info} />     
+                );
+            }
+        });
+    }
     
     render(){
         return (
             <div>
-            <Card className = "refrigerator-item" style={{ width: '13vw' }}  onClick = {(e)=>{console.log("whole")}}>
+            <Card className = "refrigerator-item" style={{ width: '13vw' }}  onClick = {(e)=>{this.takeItemOut()}}>
             <Card.Body>
                 <Card.Title className="refrigerator-item-title">{this.state.item_name} </Card.Title>
             </Card.Body>

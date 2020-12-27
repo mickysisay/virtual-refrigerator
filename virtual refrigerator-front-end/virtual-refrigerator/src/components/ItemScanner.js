@@ -28,6 +28,7 @@ export default class ItemScanner extends React.Component {
           
         if(Quagga.intialize === undefined){
          const video = document.getElementById("scannerIndicator");
+          
             Quagga.onDetected(async (result)=>{ 
                 const lastCode = result.codeResult.code;
                 if(video.classList.contains('border-radius')){
@@ -55,9 +56,8 @@ export default class ItemScanner extends React.Component {
             numOfWorkers:navigator.hardwareConcurrency ,
             target: document.getElementById('item-scanner'),
             constraints: {
-                width: window.innerWidth*0.6,
-                height: window.innerHeight*0.5,
-                facing: "environment" // or user
+                width: 500,// window.innerWidth*0.6,
+                height: 400//window.innerHeight*0.5,
             }   
           },
           decoder : {

@@ -6,7 +6,6 @@ import ItemScanner from './ItemScanner'
 import { MDBInput,MDBInputGroup } from "mdbreact";
 import 'bootstrap/dist/css/bootstrap.css'
 import { Button,Modal} from 'react-bootstrap';
-import { confirmAlert } from 'react-confirm-alert';
 import './login.css'
 
 export default class AddPersonalItem extends React.Component {

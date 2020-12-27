@@ -171,8 +171,13 @@ const editItemInRefrigerator = async (data) =>{
 const getItemByRefrigeratorIdAndBarCode = async (data) =>{
     const refrigerator_id = data["refrigerator_id"];
     const bar_code = data["bar_code"];
-    const endpoint = APPURL + "item/?refrigertot_id="+refrigerator_id +"&bar_code="+bar_code;
+    const endpoint = APPURL + "item/?refrigerator_id="+refrigerator_id +"&bar_code="+bar_code;
     const response = await getRequestsWithToken(endpoint);
+    return response;
+}
+const takeItemOutOFRefrigerator = async (data) =>{
+    const endpoint = APPURL + "item/take";
+    const response = await postRequestsWithToken(endpoint,data);
     return response;
 }
 const backendAPI = {
@@ -192,7 +197,8 @@ const backendAPI = {
     getAllItemsInRefrigerator : getAllItemsInRefrigerator,
     deleteItemFromRefrigerator: deleteItemFromRefrigerator,
     editItemInRefrigerator: editItemInRefrigerator,
-    getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode
+    getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode,
+    takeItemOutOFRefrigerator : takeItemOutOFRefrigerator
 }
 
 export default backendAPI;

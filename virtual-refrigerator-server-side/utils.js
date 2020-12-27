@@ -352,7 +352,59 @@ class BasicUtils {
         }
         res.json({status:true,message:response});   
     }
+    static async takeItemOutOfRefrigerator(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const itemId = req.body["id"];
+        const refrigeratorId = req.body["refrigerator_id"];
+        if(typeof itemId !== "string" || typeof refrigeratorId !== "string"){
+            res.status(400).json({status:false, message : "item id or refrigerator id is not valid"});
+            return;
+        }
+        const quantity = req.body["quantity"];
+        if(typeof quantity !== "number"){
+            res.status(400).json({status:false,message:"quantity is missing"});
+            return;
+        }
+        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!hasAccess){
+            res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
+            return;
+        }
+        const items = await commonQueries.getItemByRefrigeratorIdAndId(itemId,refrigeratorId);
+        if(items.length === 0){
+            //no item exists
+            res.status(404).json({status:false,message:"item doesn't exist"});
+            return;
+        }
+        const totalQuantity = items[0]["quantity"];
+        if(quantity > totalQuantity){
+            res.status(400).json({status:false,message:"quantity can't be over instock amount of "+ totalQuantity});
+            return;
+        }
+        if(quantity === totalQuantity){
+            //delete item
+            const response = await commonQueries.deleteItem(itemId,refrigeratorId);
+            if(!response.success){
+                res.status(404).json({status:false,message:"item doesn't exist"}); 
+                return
+            }
+            res.json({status:true,message:response.response});
+            return;
+        }
 
+        const resp = await commonQueries.updateItemQuantity(itemId,refrigeratorId,totalQuantity-quantity);
+        if(!resp.success){
+            res.status(404).json({status:false,message:"item doesn't exist"}); 
+            return
+        }
+        res.json({status:true,message:resp.response});
+
+    }
     static async deleteItem(req,res){
         const data = await this.getInfoFromToken(req);
         if(!data.user){

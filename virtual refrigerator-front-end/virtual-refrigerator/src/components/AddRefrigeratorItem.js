@@ -155,7 +155,6 @@ handleExpirationDateChange =(e) =>{
       }else{
           return( <div id="outPopUp" >   
               <Button variant="primary" onClick = {()=>{
-              console.log("close");
               this.clickChild()
               this.changeisScannerOn(false)}}>Cancel</Button>
                <ItemScanner  setCloseCamera = {(e)=>{

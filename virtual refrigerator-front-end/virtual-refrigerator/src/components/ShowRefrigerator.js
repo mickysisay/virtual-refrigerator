@@ -14,6 +14,7 @@ import { MDBIcon,MDBFormInline } from 'mdbreact';
 import RefrigeratorItemShow from "./RefrigeratorItemShow"
 import AddRefrigeratorItem from "./AddRefrigeratorItem"
 import { Navbar as Navigationbar, Nav as Navigation, Form } from 'react-bootstrap';
+import ScanForRefrigeratorItem from './ScanForRefrigeratorItem'
 
 export default class ShowRefrigerator extends React.Component{
     constructor(props){
@@ -68,6 +69,17 @@ export default class ShowRefrigerator extends React.Component{
       }
     }
 
+    openItemScanner = () =>{
+        confirmAlert({
+            customUI: ({ onClose }) => {
+                return (
+                    <div>
+                     <ScanForRefrigeratorItem setItem ={this.setRefrigeratorItems} onClose = {onClose} refrigerator_id={this.state.id}/>
+                   </div>
+                );
+            }
+        });
+    }
    
     createAddItemModal = () =>{
         confirmAlert({
@@ -151,6 +163,7 @@ export default class ShowRefrigerator extends React.Component{
         </Navigation>
         <Form inline>
           <Navigation className="mr-auto">
+          <Navigationbar.Brand style={{cursor:"pointer"}} onClick={() => this.openItemScanner()}><MDBIcon icon="barcode" /></Navigationbar.Brand>
             <Navigation.Link href="/logout">Logout</Navigation.Link> 
           </Navigation>
         </Form>

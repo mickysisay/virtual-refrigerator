@@ -221,6 +221,35 @@ const addNewItem = async (itemInformation) =>{
     resultItems = JSON.parse(resultItems);  
     return {success:result.length,response : resultItems};
 }
+const updateItemQuantity = async (itemId,refrigeratorId,quantity) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'UPDATE `items` SET `quantity` = ?  ' +
+        'WHERE `refrigerator_id` = ? AND `id` = ?  ',
+        timeout: 40000,
+        values:[quantity,refrigeratorId,itemId]
+    });
+   
+    result = JSON.stringify(result);
+    result = JSON.parse(result); 
+    let resultItems=[];
+    if(result.affectedRows !== 0){
+         resultItems = await query({
+            sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ?  ',
+            timeout: 40000,
+            values:[refrigeratorId]
+        });
+        resultItems = JSON.stringify(resultItems);
+        resultItems = JSON.parse(resultItems);  
+    } 
+    connection.end();
+    return {success:result.affectedRows !== 0,response : resultItems};
+}
 const deleteItem = async (itemId,refrigeratorId) =>{
     let connection = openConnection();
     if(!connection){
@@ -374,6 +403,23 @@ const addPersonalItem = async (personalItemInformation) =>{
     console.log(result);
     return {success:result.affectedRows !==0, response:resultItems};
 }
+const getItemByRefrigeratorIdAndId = async (id,refrigeratorId)=>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ? AND `id` = ?',
+        timeout: 40000,
+        values:[refrigeratorId, id]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
 const deletePersonalItem = async (personalItemId, ownerId) =>{
     let connection = openConnection();
     if(!connection){
@@ -421,5 +467,7 @@ module.exports = {
     addPersonalItem:addPersonalItem,
     deletePersonalItem:deletePersonalItem,
     editItem: editItem,
-    getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode
+    getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode,
+    getItemByRefrigeratorIdAndId : getItemByRefrigeratorIdAndId,
+    updateItemQuantity : updateItemQuantity
 }
