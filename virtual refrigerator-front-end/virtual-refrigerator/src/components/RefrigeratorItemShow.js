@@ -108,9 +108,11 @@ export default class RefrigeratorItemShow extends React.Component {
     render(){
         return (
             <div>
-            <Card className = "refrigerator-item" style={{ width: '13vw' }}  onClick = {(e)=>{this.takeItemOut()}}>
+            <Card className = "refrigerator-item" style={{ width: '13vw',height:'15vw' }}  onClick = {(e)=>{this.takeItemOut()}}>
             <Card.Body>
-                <Card.Title className="refrigerator-item-title">{this.state.item_name} </Card.Title>
+                <Card.Title className="refrigerator-item-title">{
+                    this.state.status === "EXPIRED" ? <MDBIcon icon="exclamation-triangle" className="red-text">&nbsp;&nbsp;</MDBIcon> : null
+                }{this.state.item_name} </Card.Title>
             </Card.Body>
 
             <Card.Body className="either-end">

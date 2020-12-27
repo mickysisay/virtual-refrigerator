@@ -110,7 +110,6 @@ export default class TakeItem extends React.Component {
                         
                        <div>Expiration Date &nbsp;&nbsp;
                        <DateTimePicker
-                        minDate = {new Date()}
                          value = {this.state.expiration_date} 
                           />
                               </div>

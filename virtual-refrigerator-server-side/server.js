@@ -1,3 +1,8 @@
 const app = require('./controllers/personalItems')
-
-app.listen(5000, ()=>{console.log("server started on port 5000")});
+const cron = require('node-cron');
+const commonQueries = require('./mysql/commonQueries')
+app.listen(5000,  ()=>{
+    cron.schedule('* * * * *',async () => {
+          await commonQueries.changeStatusOfExpiredItems()
+      });
+    console.log("server started on port 5000")});

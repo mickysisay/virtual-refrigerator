@@ -297,6 +297,8 @@ class BasicUtils {
             if(Date.now() >= itemInformation["expiration_date"]){
                 res.status(400).json({status:false,message:"expiration date should be older than today"});
                 return;
+            }else{
+                itemInformation["status"] = "NORMAL";  
             }
             itemInformation["expiration_date"] =  moment(itemInformation["expiration_date"]).format();
         }

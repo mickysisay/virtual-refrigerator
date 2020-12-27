@@ -448,6 +448,33 @@ const deletePersonalItem = async (personalItemId, ownerId) =>{
     connection.end();
     return {success:result.affectedRows !== 0,response : resultItems};
 }
+const changeStatusOfExpiredItems = async () =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const normal ="NORMAL";
+    const expired = "EXPIRED";
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'UPDATE `items` SET  `status` = ? ' +
+        'WHERE `expiration_date`  <=  NOW() AND `status` = ?',
+        timeout: 40000,
+        values:[expired,normal]
+    });
+    let results2 = await query({
+        sql : 'UPDATE `items` SET  `status` = ? ' +
+        'WHERE `expiration_date`  > NOW() AND `status` = ?',
+        timeout: 40000,
+        values:[normal,expired]
+    }); 
+    results2 = JSON.stringify(results2);
+    results2 = JSON.parse(results2);
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result.affectedRows + results2.affectedRows; 
+}
 module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
@@ -469,5 +496,6 @@ module.exports = {
     editItem: editItem,
     getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode,
     getItemByRefrigeratorIdAndId : getItemByRefrigeratorIdAndId,
-    updateItemQuantity : updateItemQuantity
+    updateItemQuantity : updateItemQuantity,
+    changeStatusOfExpiredItems : changeStatusOfExpiredItems
 }
