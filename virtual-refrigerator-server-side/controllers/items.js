@@ -14,5 +14,7 @@ app.get("/api/item/:id",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.getAllItems(req,res);
 });
 //edit item name ,status,quantity,expiration_date
-
+app.post("/api/item/edit",basicUtils.verifyToken,async (req,res)=>{
+    await basicUtils.editItem(req,res);
+});
 module.exports = app;

@@ -20,7 +20,7 @@ export default class AddPersonalItem extends React.Component {
           item_name : itemName,
           barCode : barCode,
           quantity : 1,
-          expiration_date : new Date(),
+          expiration_date : null,
           isScannerOn :false,
           refrigeratorId : refrigeratorId
         }

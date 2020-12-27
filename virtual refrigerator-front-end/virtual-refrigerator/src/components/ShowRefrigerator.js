@@ -128,7 +128,8 @@ export default class ShowRefrigerator extends React.Component{
           this.state.filteredPersonalItems.length !== 0 ?
           this.state.filteredPersonalItems.map((e)=>{ 
               return (
-              <PersonalItemShow key={e["id"]}  setPersonalItems ={this.setPersonalItems} personalItem = {e} />
+              <PersonalItemShow key={e["id"]} setItem={this.setRefrigeratorItems} 
+               setPersonalItems ={this.setPersonalItems} personalItem = {e} refrigeratorId={this.state.id} />
               )
           }): <div>No items found</div>}
           
@@ -176,7 +177,7 @@ export default class ShowRefrigerator extends React.Component{
             this.state.filteredAllItems.map((e)=>{ 
                  return (
                     <Grid key={e["id"]} >
-                 <RefrigeratorItemShow  setItem ={this.setItem} item = {e} />
+                 <RefrigeratorItemShow  setItem ={this.setRefrigeratorItems} item = {e} />
                 </Grid>                 )
              }): <div>No items found</div>}
              </Grid>

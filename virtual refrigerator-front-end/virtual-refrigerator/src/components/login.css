@@ -25,10 +25,16 @@
     
 }
 .refrigerator-item{
-    margin: 2vw;
+    margin: 2vw !important;
     font-family: 'Times New Roman', Times, serif;
-    font-size: 1.5vw;
+    font-size: 1.5vw !important;
     box-shadow: 2px 4px #888888;
+}
+.card-body{
+    padding : 2vw !important;
+}
+.refrigerator-item-title{
+    font-size:1.5vw !important;
 }
 .form-control-sm::-webkit-input-placeholder{
     font-size:1.5vw;

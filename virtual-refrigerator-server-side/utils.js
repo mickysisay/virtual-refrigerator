@@ -255,6 +255,66 @@ class BasicUtils {
         const response = await commonQueries.addNewItem(itemInformation);
         res.json({status:true, message: response.response});
     }
+    static async editItem(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const itemId = req.body["id"];
+        const refrigeratorId = req.body["refrigerator_id"];
+        if(typeof itemId !== "string" || typeof refrigeratorId !== "string"){
+            res.status(400).json({status:false, message : "item id or refrigerator id is not valid"});
+            return;
+        }
+        //check if user has access to refrigerator
+        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!hasAccess){
+            res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
+            return;
+        }
+        const itemInformation = req.body;
+        if(typeof itemInformation["item_name"]!== "string" ){
+            res.status(400).json({status:false,message:"item name doesn't exist"});
+            return;
+        }
+        if(itemInformation["item_name"].trim() === ""){
+            res.status(400).json({status:false,message  : "item name can't be empty"});
+            return;
+        }
+        if(itemInformation["status"] !== "NORMAL" && itemInformation["status"] !== "EXPIRED"){
+            res.status(400).json({status:false,message : "item status is not valid"});
+            return;
+        }
+        if(itemInformation["expiration_date"]){
+            //check if its a number
+            if(typeof itemInformation["expiration_date"] !== 'number'){
+                res.status(400).json({status:false,message:"expiration date is not a number"});
+                return;
+            }
+            //check if date is after today
+            if(Date.now() >= itemInformation["expiration_date"]){
+                res.status(400).json({status:false,message:"expiration date should be older than today"});
+                return;
+            }
+            itemInformation["expiration_date"] =  moment(itemInformation["expiration_date"]).format();
+        }
+        if(typeof itemInformation["quantity"]=== "number"){
+            if(itemInformation["quantity"] <=0){
+                res.status(400).json({status : false, message:"quantity can't be less than 1"});
+                return
+            }
+        }else{
+            itemInformation["quantity"] = 1;
+        }
+        const response = await commonQueries.editItem(itemInformation);
+        if(!response.success){
+            res.status(404).json({status:false,message:"no item found"});
+            return;
+        }
+        res.json({status:response.success,message : response.response});
+    }
     static async deleteItem(req,res){
         const data = await this.getInfoFromToken(req);
         if(!data.user){
