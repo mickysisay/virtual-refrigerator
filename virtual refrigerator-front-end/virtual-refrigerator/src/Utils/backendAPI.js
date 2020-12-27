@@ -1,5 +1,4 @@
 import axios from 'axios';
-import RefrigeratorCard from '../components/RefrigeratorCard';
 import {APPURL} from './Constants'
 
 
@@ -169,6 +168,13 @@ const editItemInRefrigerator = async (data) =>{
     const response = await postRequestsWithToken(endpoint,data);
     return response;
 }
+const getItemByRefrigeratorIdAndBarCode = async (data) =>{
+    const refrigerator_id = data["refrigerator_id"];
+    const bar_code = data["bar_code"];
+    const endpoint = APPURL + "item/?refrigertot_id="+refrigerator_id +"&bar_code="+bar_code;
+    const response = await getRequestsWithToken(endpoint);
+    return response;
+}
 const backendAPI = {
     postRequestsWithToken : postRequestsWithToken,
     getRequestsWithToken : getRequestsWithToken,
@@ -185,7 +191,8 @@ const backendAPI = {
     addRefrigeratorItem :addRefrigeratorItem,
     getAllItemsInRefrigerator : getAllItemsInRefrigerator,
     deleteItemFromRefrigerator: deleteItemFromRefrigerator,
-    editItemInRefrigerator, editItemInRefrigerator
+    editItemInRefrigerator: editItemInRefrigerator,
+    getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode
 }
 
 export default backendAPI;

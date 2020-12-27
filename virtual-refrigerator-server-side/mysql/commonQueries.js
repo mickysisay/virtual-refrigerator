@@ -334,6 +334,23 @@ const getAllPersonalItemsByOwnerId = async (ownerId) =>{
     result = JSON.parse(result);
     return result;
 }
+const getItemByRefrigeratorIdAndBarCode = async (refrigeratorId,barCode) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `items` WHERE `refrigerator_id` = ? AND `bar_code` = ?',
+        timeout: 40000,
+        values:[refrigeratorId, barCode]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
 const addPersonalItem = async (personalItemInformation) =>{
     const id = personalItemInformation["id"];
     const itemName = personalItemInformation["item_name"];
@@ -403,5 +420,6 @@ module.exports = {
     getAllPersonalItemsByOwnerId:getAllPersonalItemsByOwnerId,
     addPersonalItem:addPersonalItem,
     deletePersonalItem:deletePersonalItem,
-    editItem: editItem
+    editItem: editItem,
+    getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode
 }

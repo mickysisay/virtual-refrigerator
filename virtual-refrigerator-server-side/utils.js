@@ -315,6 +315,44 @@ class BasicUtils {
         }
         res.json({status:response.success,message : response.response});
     }
+    static async getItemUsingRefrigeratorIdAndBarCode (req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const barCode = req.query.bar_code;
+        const refrigeratorId = req.query.refrigerator_id;
+        if(typeof barCode !== "string"){
+            res.status(400).json({status:false,message:"not a valid barcode"});
+            return;
+        }
+        if(barCode.trim().length === ""){
+            res.status(400).json({status:false,message:"not a valid barcode"});
+            return;
+        }
+        if(typeof refrigeratorId !== "string"){
+            res.status(400).json({status:false,message:"not a valid refrigerator id"});
+            return;
+        }
+        if(refrigeratorId.trim().length === ""){
+            res.status(400).json({status:false,message:"not a valid refrigerator id"});
+            return;
+        }
+        const hasAccess = await this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!hasAccess){
+            res.status(403).json({status:false, message:"User doesnot have access to refrigerator"});
+            return;
+        }
+        const response = await commonQueries.getItemByRefrigeratorIdAndBarCode(refrigeratorId,barCode);
+        if(response.length === 0){
+            res.status(404).json({status:false, message :"not item found in refrigerator with that barcode"});
+            return;
+        }
+        res.json({status:true,message:response});   
+    }
+
     static async deleteItem(req,res){
         const data = await this.getInfoFromToken(req);
         if(!data.user){
@@ -410,7 +448,7 @@ class BasicUtils {
             res.status(400).json({status:false,message:"not a valid barcode"});
             return;
         }
-        if(barCode.trim().length === 0){
+        if(barCode.trim().length === ""){
             res.status(400).json({status:false,message:"not a valid barcode"});
             return;
         }

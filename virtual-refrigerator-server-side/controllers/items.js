@@ -17,4 +17,8 @@ app.get("/api/item/:id",basicUtils.verifyToken,async (req,res)=>{
 app.post("/api/item/edit",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.editItem(req,res);
 });
+//get item in refrigerator using refrigeratorId and barCode (?refrigerator_id=''&barCode='')
+app.get("/api/item/",basicUtils.verifyToken,async (req,res)=>{
+    await basicUtils.getItemUsingRefrigeratorIdAndBarCode(req,res);
+});
 module.exports = app;

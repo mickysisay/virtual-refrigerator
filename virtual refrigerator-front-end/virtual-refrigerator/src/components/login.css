@@ -98,12 +98,10 @@
 }
 #outPopUp {
     position: absolute;
-    width: 150px;
-    height: 150px;
     z-index: 15;
-    top: 35%;
-    left: 40%;
-    margin: -100px 0 0 -150px;
+    top: 15%;
+    left: 20vw;
+   
   }
 .react-confirm-alert-overlay{
     pointer-events: none
