@@ -469,6 +469,7 @@ const changeStatusOfExpiredItems = async () =>{
         timeout: 40000,
         values:[normal,expired]
     }); 
+    connection.end();
     results2 = JSON.stringify(results2);
     results2 = JSON.parse(results2);
     result = JSON.stringify(result);

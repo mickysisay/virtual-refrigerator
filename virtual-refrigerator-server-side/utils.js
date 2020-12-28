@@ -18,7 +18,7 @@ class BasicUtils {
        try{
          await jwt.verify(token,constants.SECRETKEY);
        }catch(e){
-           res.status(401).json({success:false,message:e});
+           res.status(401).json({success:false,message:e.message});
            return;
        }
        next(); 

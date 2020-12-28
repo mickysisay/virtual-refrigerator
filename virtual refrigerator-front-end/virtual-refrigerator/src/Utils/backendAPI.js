@@ -2,6 +2,12 @@ import axios from 'axios';
 import {APPURL} from './Constants'
 
 
+let timeOut =(time,expirationTime) =>  {
+    
+   return  setTimeout(()=>{
+       checkToken();
+   },(expirationTime -  (time.getTime() / 1000)) * 1000)
+};
 
 const postRequestsWithToken = async (endpoint, data )=>{
     try{
@@ -15,9 +21,21 @@ const postRequestsWithToken = async (endpoint, data )=>{
             data : data,
             headers : headers
         }); 
+        const clear = localStorage.getItem("checkToken");
+        if(JSON.parse(localStorage.getItem("userInfo"))){
+        const expiration_date = JSON.parse(localStorage.getItem("userInfo"))["exp"];
+        clearTimeout(clear);  
+        const actualTimeout =  timeOut(new Date(),expiration_date);
+       localStorage.setItem("checkToken",actualTimeout);
+        }
         return {statusCode : 200, message : resp.data};
      }catch(e){
         const resp = e.response;
+        console.log(e);
+        if(resp.status === 401){
+          const responsee = await checkToken();
+          return responsee;
+        }
          try{
          return {statusCode : resp.status,message : resp.data};
          }catch(e){
@@ -43,6 +61,8 @@ const checkToken = async ()=>{
      const resp = e.response;
      if(resp.status === 401){
       localStorage.removeItem("token");
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("checkToken");
       window.location.reload();
      }
      return {statusCode : resp.status , message:"something wrong with token"}
@@ -61,6 +81,13 @@ const getRequestsWithToken = async (endpoint,data = {}) =>{
             data : data,
             headers : headers
         }); 
+        if(JSON.parse(localStorage.getItem("userInfo"))){
+          const clear = localStorage.getItem("checkToken");
+          const expiration_date = JSON.parse(localStorage.getItem("userInfo"))["exp"];
+          clearTimeout(clear);  
+          const actualTimeout =  timeOut(new Date(),expiration_date);
+         localStorage.setItem("checkToken",actualTimeout);
+        }
         return {statusCode : 200, message : resp.data};
      }catch(e){
         const resp = e.response;
@@ -83,11 +110,12 @@ const loginRequest = async (state) =>{
            "password" : state.password
        }
      const response = await postRequestsWithToken(endpoint,data);
-     if(response.statusCode === 200){
-       const timeOut =  (response.message.info.exp - response.message.info.iat) * 1000;
-       setTimeout(()=>{
-           checkToken();
-       },timeOut); 
+     if(response.statusCode === 200){ 
+       const expiration_time  = response.message.info.exp;
+     
+       const actualTimeout =  timeOut(new Date(),expiration_time);
+       localStorage.setItem("checkToken",actualTimeout);
+       localStorage.setItem("userInfo" , JSON.stringify(response.message.info));
      } 
      return response;
 }

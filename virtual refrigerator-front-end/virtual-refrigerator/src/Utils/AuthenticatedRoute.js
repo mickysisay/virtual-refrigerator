@@ -23,5 +23,7 @@ export const isAuthorized = function () {
 }
 export const LogOut = function () {
     localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("checkToken");
 }
 
