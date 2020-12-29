@@ -15,6 +15,11 @@ import RefrigeratorItemShow from "./RefrigeratorItemShow"
 import AddRefrigeratorItem from "./AddRefrigeratorItem"
 import { Navbar as Navigationbar, Nav as Navigation, Form } from 'react-bootstrap';
 import ScanForRefrigeratorItem from './ScanForRefrigeratorItem'
+import Switch from "react-switch";
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
 
 export default class ShowRefrigerator extends React.Component{
     constructor(props){
@@ -25,12 +30,19 @@ export default class ShowRefrigerator extends React.Component{
             allItems:[],
             filteredPersonalItems : [],
             filteredAllItems : [],
-            sidebarOpen : false
+            sidebarOpen : false,
+            showingCalender : false,
         }
     }
     componentDidMount(){
       this.getAllPersonalItems();
       this.getAllItems();
+    }
+    toggleShowCalendar = (e) =>{
+        this.setState({
+            showingCalender : e
+        })
+        
     }
     onSetSidebarOpen=(open)=> {
         this.setState({ sidebarOpen: open });
@@ -122,6 +134,7 @@ export default class ShowRefrigerator extends React.Component{
         });
       }
     render(){
+        console.log(this.state.showingCalender);
         return(
         <div>
             <Sidebar
@@ -155,22 +168,24 @@ export default class ShowRefrigerator extends React.Component{
         children = {
             <div>
 
-        <Navigationbar bg="dark" variant="dark">
-        <Navigationbar.Brand style={{cursor:"pointer"}} onClick={() => this.onSetSidebarOpen(true)}>Sidebar</Navigationbar.Brand>  
+            <Navigationbar className="refrigerator-bar" bg="dark" variant="dark">
+            <Navigationbar.Brand style={{cursor:"pointer"}} onClick={() => this.onSetSidebarOpen(true)}>Sidebar</Navigationbar.Brand>  
         
-        <Navigation className="mr-auto">
-        <Navigation.Link data-testid="homeButton" href="/">Home</Navigation.Link>
-        </Navigation>
-        <Form inline>
-          <Navigation className="mr-auto">
-          <Navigationbar.Brand style={{cursor:"pointer"}} onClick={() => this.openItemScanner()}><MDBIcon icon="barcode" /></Navigationbar.Brand>
-            <Navigation.Link href="/logout">Logout</Navigation.Link> 
-          </Navigation>
-        </Form>
-       </Navigationbar>  
+            <Navigation className="mr-auto">
+            <Navigation.Link data-testid="homeButton" href="/">Home</Navigation.Link>
+            </Navigation>
+            <Form inline>
+              <Navigation className="mr-auto">
+              <Navigationbar.Brand style={{cursor:"pointer"}} onClick={() => this.openItemScanner()}><MDBIcon icon="barcode" /></Navigationbar.Brand>
+                    <Navigation.Link href="/logout">Logout</Navigation.Link> 
+              </Navigation>
+              </Form>
+              </Navigationbar>  
 
-       
+             
+
             <div className = "refrigerator-items">
+            
             <MDBFormInline className="md-form">
          <MDBIcon icon="search" />
              <input className="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search Refrigerator Items"
@@ -178,6 +193,29 @@ export default class ShowRefrigerator extends React.Component{
           onChange = {this.filterAllItems} />
          </MDBFormInline>
          <Button block className="add-buttons"  onClick = {()=>{this.createRefrigeratorItemModal()}}>Add Refrigerator Item</Button>
+            <div className = "toggle-calendar">
+            <span>Normal</span>
+            <Switch onChange={this.toggleShowCalendar} 
+            checked={this.state.showingCalender}
+             />
+            <span>Calendar</span>
+             </div><hr />
+             {this.state.showingCalender ?  
+             <FullCalendar
+             width = {window.innerWidth*0.6}
+             height = {700}
+              plugins={[  dayGridPlugin, timeGridPlugin, listPlugin  ]}
+              initialView="dayGridMonth"
+             events={this.state.filteredAllItems.map(e=>{
+                 return {
+                     title : e["item_name"],
+                     start : e["CreatedOn"],
+                     end : e["expiration_date"]
+                 }
+             })}
+             />
+             
+             :
          <Grid
                     container
                     direction="row"
@@ -185,6 +223,7 @@ export default class ShowRefrigerator extends React.Component{
                     spacing={32}
                     className='mt-4'
                     >
+                       
             {this.state.filteredAllItems.length !== 0 ?
             
             this.state.filteredAllItems.map((e)=>{ 
@@ -193,7 +232,7 @@ export default class ShowRefrigerator extends React.Component{
                  <RefrigeratorItemShow  setItem ={this.setRefrigeratorItems} item = {e} />
                 </Grid>                 )
              }): <div>No items found</div>}
-             </Grid>
+             </Grid>}
             </div>
             </div>
         }

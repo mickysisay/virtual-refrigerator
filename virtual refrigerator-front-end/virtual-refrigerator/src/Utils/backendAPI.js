@@ -3,10 +3,10 @@ import {APPURL} from './Constants'
 
 
 let timeOut =(time,expirationTime) =>  {
-    
+    console.log(((expirationTime+20) -  (time.getTime() / 1000)) * 1000);
    return  setTimeout(()=>{
        checkToken();
-   },(expirationTime -  (time.getTime() / 1000)) * 1000)
+   },((expirationTime+20) -  (time.getTime() / 1000)) * 1000)
 };
 
 const postRequestsWithToken = async (endpoint, data )=>{
@@ -32,10 +32,15 @@ const postRequestsWithToken = async (endpoint, data )=>{
      }catch(e){
         const resp = e.response;
         console.log(e);
+     if(resp){
         if(resp.status === 401){
           const responsee = await checkToken();
           return responsee;
         }
+    }else{
+        const responsee = await checkToken();
+          return responsee;
+    }
          try{
          return {statusCode : resp.status,message : resp.data};
          }catch(e){

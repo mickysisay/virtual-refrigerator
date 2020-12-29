@@ -33,6 +33,12 @@ export default class EditRefrigeratorItem extends React.Component {
             "quantity":this.state.quantity,
             "status" : this.state.status,
         }
+        if(typeof this.state.quantity !== 'number'){
+            NotificationManager.error('Error message', "quantity can't be empty", 1000, () => {
+                alert('callback');
+            }); 
+            return;
+        }
         if(this.state.expiration_date !== null){
           data["expiration_date"]  = this.state.expiration_date.getTime();
         }
@@ -64,12 +70,26 @@ export default class EditRefrigeratorItem extends React.Component {
         
      }
      handleInputQuantity = (e) =>{
-       const numValue = Number(e.target.value);
-       if(typeof numValue === "number" && numValue <100 && numValue > 0){
-         this.setState({
-            quantity : numValue
-         });
-       }
+        const numValue = Number(e.target.value);
+        if(numValue === 0){
+            this.setState({
+                quantity : ""
+            })
+            return;
+        }
+        if(typeof numValue === "number" && numValue <=100){
+          this.setState({
+             quantity : numValue
+          });
+        }
+
+
+    //    const numValue = Number(e.target.value);
+    //    if(typeof numValue === "number" && numValue <100 && numValue > 0){
+    //      this.setState({
+    //         quantity : numValue
+    //      });
+    //    }
      }
      handleExpirationDateChange =(e) =>{
          

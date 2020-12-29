@@ -60,6 +60,7 @@
     display: block;
     padding:2vw;
     height:100% !important;
+    z-index:3 !important;
 }
 .home-button{
     display: flex;
@@ -89,6 +90,12 @@
     float:right;
     width:60%;
     font-size: 1.5vw;
+    margin-top: 80px;
+}
+.refrigerator-bar{
+    position:fixed !important;
+    width:100% !important;
+    z-index :2 !important;
 }
 .fluid-font{
     font-size: 2vw;
@@ -96,21 +103,48 @@
 .border-radius{
     display:none;
 }
+@media(max-width : 800px){
+    #outPopUp {
+        position: absolute;
+        z-index: 15;
+        top: 15%;
+        left:20px;
+      }
+    video{
+        object-fit: fill;
+        height: 300px !important;
+        width : 300px !important;
+    }  
+}
+@media(min-width : 800px){
 #outPopUp {
     position: absolute;
     z-index: 15;
     top: 15%;
-    left: 20vw;
-   
+    left:20vw
   }
+}
 .react-confirm-alert-overlay{
     pointer-events: none
 }
 .react-confirm-alert{
     pointer-events: all;
 }
- 
+.toggle-calendar{
+    float: right;
+    size: 1.5vw;
+    padding:10px;
+}
+.fc-media-screen{
+    margin-top:60px;
+    margin-right : 50px;
+} 
 .add-buttons {
     font-size:1.2vw !important;
     margin-bottom:10px !important;
+}
+span{
+    margin-left:5px;
+    margin-right: 5px;
+    font-size: 1.5vw;
 }

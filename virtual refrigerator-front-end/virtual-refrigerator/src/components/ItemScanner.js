@@ -54,11 +54,11 @@ export default class ItemScanner extends React.Component {
             name : "Live",
             type : "LiveStream",
             numOfWorkers:navigator.hardwareConcurrency ,
-            target: document.getElementById('item-scanner'),
-            constraints: {
-                width: 500,// window.innerWidth*0.6,
-                height: 400//window.innerHeight*0.5,
-            }   
+            target: document.getElementById('item-scanner')
+            // constraints: {
+            //     width: 400 ,//  window.innerWidth*0.6,
+            //     height:500 //window.innerHeight*0.5,
+            // }   
           },
           decoder : {
             readers : ["code_128_reader","ean_reader","ean_8_reader","code_39_reader","code_39_vin_reader",

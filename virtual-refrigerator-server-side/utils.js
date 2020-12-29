@@ -465,10 +465,14 @@ class BasicUtils {
             return;
         }
         if(typeof personalItemInfo["bar_code"] === "string"){
+            if(personalItemInfo["bar_code"] !== ""){
         const personalItem = await commonQueries.getPersonalItemByOwnerIdAndbarCode(data.user.id,personalItemInfo["bar_code"]);
             if(personalItem.length !=0){
                 res.status(402).json({status:false,message:"item already exists"});
                 return;
+            }
+            }else{
+                personalItemInfo["bar_code"] === null;
             }
         }
         personalItemInfo["owner_id"]= data.user.id;
