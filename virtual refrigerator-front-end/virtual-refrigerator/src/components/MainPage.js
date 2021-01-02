@@ -15,7 +15,6 @@ export default class MainPage extends React.Component{
         }
     }
     saveAllRefrigerators =async ()=>{
-        console.log("hello")
     const response =await backendAPI.getAllRefrigetors();
     const refrigerators = response.message;
     if(response.statusCode === 200){

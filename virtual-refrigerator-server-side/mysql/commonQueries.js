@@ -1,3 +1,4 @@
+const { query } = require('express');
 const mysql = require('mysql');
 const util = require('util');
 
@@ -150,6 +151,23 @@ const getRefrigeratorByUserIdAndRefrigeratorId = async (userId,refrigeratorId) =
         sql : 'SELECT * FROM `refrigerators` WHERE `owner_id` = ? AND `id` = ?  ',
         timeout: 40000,
         values:[userId,refrigeratorId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);  
+    return result;
+}
+const getRefrigeratorById = async (id) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * FROM `refrigerators` WHERE `id` = ?  ',
+        timeout: 40000,
+        values:[id]
     });
     connection.end();
     result = JSON.stringify(result);
@@ -476,6 +494,120 @@ const changeStatusOfExpiredItems = async () =>{
     result = JSON.parse(result);
     return result.affectedRows + results2.affectedRows; 
 }
+const doesUserHasAccessToRefrigerator = async(userId,refrigeratorId) => {
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * from `users_access` where `refrigerator_id`' +
+         ' = ? AND `user_id` = ?' ,
+        timeout: 40000,
+        values:[refrigeratorId,userId]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result.length !==0;
+}
+const getRefrigeratorsWithAccess = async (userId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT r.* from  `refrigerators` r inner JOIN `users_access`'
+        +' u ON u.user_id = ? AND r.id = u.refrigerator_id' ,
+        timeout: 40000,
+        values:[userId]
+    });
+     connection.end();
+     result = JSON.stringify(result);
+     result = JSON.parse(result);
+    return result;
+}
+const getUsersWithAccess = async (query ,refrigeratorId ) =>{
+    let result = await query({
+        sql : 'SELECT u.id,u.username,u.email from `users` u INNER JOIN `users_access` a '+
+        'ON a.refrigerator_id = ? AND u.id = a.user_id' ,
+        timeout: 40000,
+        values:[refrigeratorId]
+    });
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
+const getAllUsersWithAccess = async (refrigeratorId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    const result = await getUsersWithAccess(query,refrigeratorId);
+    return result;
+}
+const takeAccessAway  = async (userId,refrigeratorId) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'DELETE FROM `users_access` where `refrigerator_id` = ? AND `user_id` = ?' ,
+        timeout: 40000,
+        values:[refrigeratorId,userId]
+    });
+    const result2  = await getUsersWithAccess(query,refrigeratorId);
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return {success: result.affectedRows,message : result2};
+}
+const giveUserAccessToRefrigerator = async (addedUserId,refrigeratorId) => {
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'INSERT INTO `users_access (`refrigerator_id`,`user_id`) values (?,?)' ,
+        timeout: 40000,
+        values:[refrigeratorId,addedUserId]
+    });
+    const result2  = await getUsersWithAccess(query,refrigeratorId);
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return {success: result.affectedRows,message : result2};
+}
+const searchUsers = async (name) =>{
+    const newName = `%${name}%`
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const num = 4
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT `id`,`username`,`email` from `users` WHERE `username` LIKE ?'+
+        'ORDER BY `username` asc LIMIT ?  ',
+        timeout: 40000,
+        values:[newName,num]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
+
 module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
@@ -485,6 +617,7 @@ module.exports = {
     getAllRefrigeratorsByUserId:getAllRefrigeratorsByUserId,
     addRefrigerator:addRefrigerator,
     getRefrigeratorByUserIdAndRefrigeratorId:getRefrigeratorByUserIdAndRefrigeratorId,
+    getRefrigeratorById : getRefrigeratorById,
     deleteRefrigeratorByUserIdAndRefrigeratorId :deleteRefrigeratorByUserIdAndRefrigeratorId,
     updateRefrigeratorByUserIdAndRefrigerator : updateRefrigeratorByUserIdAndRefrigerator,
     addNewItem : addNewItem,
@@ -498,5 +631,11 @@ module.exports = {
     getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode,
     getItemByRefrigeratorIdAndId : getItemByRefrigeratorIdAndId,
     updateItemQuantity : updateItemQuantity,
-    changeStatusOfExpiredItems : changeStatusOfExpiredItems
+    changeStatusOfExpiredItems : changeStatusOfExpiredItems,
+    doesUserHasAccessToRefrigerator : doesUserHasAccessToRefrigerator,
+    giveUserAccessToRefrigerator : giveUserAccessToRefrigerator,
+    takeAccessAway : takeAccessAway,
+    searchUsers : searchUsers,
+    getRefrigeratorsWithAccess : getRefrigeratorsWithAccess,
+    getAllUsersWithAccess : getAllUsersWithAccess
 }

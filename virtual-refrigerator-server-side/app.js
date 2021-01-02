@@ -101,5 +101,8 @@ app.post("/api/checkToken", basicUtils.verifyToken,async (req,res)=>{
    res.json(data);
 
 });
+app.get("/api/users/search/", basicUtils.verifyToken,async (req,res)=>{
+    await basicUtils.searchUsers(req,res); 
+ });
 
 module.exports = app;

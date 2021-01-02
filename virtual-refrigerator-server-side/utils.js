@@ -110,13 +110,21 @@ class BasicUtils {
             res.status(400).json({status:false,message:"no user found with that jwt token"});
             return;
         }
+        
         const userId = data.user.id;
-        const response = await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,id);
+        const hasAccess = await this.canUserAddToRefrigerator(userId,id);
+        if(!hasAccess){
+            res.status(403).json({status:false, message:"User doesnot have access to refrigerator"});
+            return;
+        }
+        const response = await commonQueries.getRefrigeratorById(id);
         if(response.length === 0){
             res.status(404).json({status:false,message:"no refrigerator found"});
             return;
         }
-        res.json({status:true,message:response});
+        const ress = response[0];
+        ress["isOwner"] = ress.owner_id === userId ? true : false;
+        res.json({status:true,message:ress});
     }
     static async getRefrigeratorFromUserId(req,res){
         let data = await this.getInfoFromToken(req);
@@ -125,8 +133,12 @@ class BasicUtils {
             return;
         }
         const userId = data.user.id;
-        const response = await commonQueries.getAllRefrigeratorsByUserId(userId);
-        res.json(response);
+        let response1 = await commonQueries.getAllRefrigeratorsByUserId(userId);
+        let response2 = await commonQueries.getRefrigeratorsWithAccess(userId);
+        response1.forEach(e=>{e["isOwner"] = true});
+        response2.forEach(e=>{e["isOwner"] = false});
+        const total = response1.concat(response2);
+        res.json(total);
     }
     static async addRefirgerator(req,res){
         const refrigeratorData = req.body;
@@ -254,6 +266,23 @@ class BasicUtils {
         itemInformation["id"] = this.createUniqueId();
         const response = await commonQueries.addNewItem(itemInformation);
         res.json({status:true, message: response.response});
+    }
+    static async getAllUsersWithAccess(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const userId = data.user.id;
+        const refrigeratorId = req.query["refrigerator_id"];
+        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        if(!hasAccess){
+            res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
+            return;
+        }
+        
+        const response = await commonQueries.getAllUsersWithAccess(refrigeratorId);
+        res.json({status:true,message:response});
     }
     static async editItem(req,res){
         const data = await this.getInfoFromToken(req);
@@ -526,10 +555,32 @@ class BasicUtils {
         const response = await commonQueries.getAllPersonalItemsByOwnerId(data.user.id);
         res.json({status:true,message:response});
     }
+    static async searchUsers(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const name = req.query["username"];
+        if(typeof name !== "string"){
+            res.status(400).json({status:false,message:"search name not found"});
+            return;
+        }
+        if(name.trim() === ""){
+            res.status(400).json({status:false,message:"can't search for empty username"});
+            return;
+        } 
+        const response = await commonQueries.searchUsers(name);
+        response.forEach(e=>{
+                  e["isYou"] = e.id=== data.user.id ? true : false;
+        })
+        res.json({status:true,message:response});
+    }
     static async canUserAddToRefrigerator(userId,refrigeratorId){
       //check if user is an owner of refrigerator
-        const response =await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId);
-        return response.length !==0;
+        const response1 =await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId);
+        const response2 = await commonQueries.doesUserHasAccessToRefrigerator(userId,refrigeratorId);
+        return (response1.length !==0 || response2);
     }
 }
 

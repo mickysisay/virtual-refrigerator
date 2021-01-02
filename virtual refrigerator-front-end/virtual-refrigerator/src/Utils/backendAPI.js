@@ -3,7 +3,7 @@ import {APPURL} from './Constants'
 
 
 let timeOut =(time,expirationTime) =>  {
-    console.log(((expirationTime+20) -  (time.getTime() / 1000)) * 1000);
+    //console.log(((expirationTime+20) -  (time.getTime() / 1000)) * 1000);
    return  setTimeout(()=>{
        checkToken();
    },((expirationTime+20) -  (time.getTime() / 1000)) * 1000)
@@ -213,6 +213,21 @@ const takeItemOutOFRefrigerator = async (data) =>{
     const response = await postRequestsWithToken(endpoint,data);
     return response;
 }
+const getAllUsersWithAccess = async (refrigerator_id) =>{
+    const endpoint = APPURL + "access/?refrigerator_id="+refrigerator_id;
+    const response = await getRequestsWithToken(endpoint);
+    return response;
+}
+const getRefrigeratorByRefrigeratorId = async (refrigerator_id) =>{
+    const endpoint = APPURL + "refrigerator/"+refrigerator_id;
+    const response = await getRequestsWithToken(endpoint);
+    return response;
+}
+const searchUsers = async (username) =>{
+    const endpoint = APPURL+"users/search/?username="+username;
+    const response = await getRequestsWithToken(endpoint);
+    return response;
+}
 const backendAPI = {
     postRequestsWithToken : postRequestsWithToken,
     getRequestsWithToken : getRequestsWithToken,
@@ -231,7 +246,10 @@ const backendAPI = {
     deleteItemFromRefrigerator: deleteItemFromRefrigerator,
     editItemInRefrigerator: editItemInRefrigerator,
     getItemByRefrigeratorIdAndBarCode : getItemByRefrigeratorIdAndBarCode,
-    takeItemOutOFRefrigerator : takeItemOutOFRefrigerator
+    takeItemOutOFRefrigerator : takeItemOutOFRefrigerator,
+    getAllUsersWithAccess : getAllUsersWithAccess,
+    getRefrigeratorByRefrigeratorId : getRefrigeratorByRefrigeratorId,
+    searchUsers: searchUsers
 }
 
 export default backendAPI;

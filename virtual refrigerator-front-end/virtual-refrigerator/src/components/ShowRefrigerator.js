@@ -20,6 +20,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
+import UserAccess from './UsersAccess'
 
 export default class ShowRefrigerator extends React.Component{
     constructor(props){
@@ -31,12 +32,20 @@ export default class ShowRefrigerator extends React.Component{
             filteredPersonalItems : [],
             filteredAllItems : [],
             sidebarOpen : false,
-            showingCalender : false,
+            showingCalender : false,       
+            refrigeratorInfo : {}
         }
+    }
+
+    changeAllowedUsers= (newAllowedUsers) =>{
+        this.setState({
+            allowedUsers : newAllowedUsers
+        });
     }
     componentDidMount(){
       this.getAllPersonalItems();
       this.getAllItems();
+      this.getRefrigeratorInfo();
     }
     toggleShowCalendar = (e) =>{
         this.setState({
@@ -44,12 +53,19 @@ export default class ShowRefrigerator extends React.Component{
         })
         
     }
+    getRefrigeratorInfo= async ()=>{
+        const response = await backendAPI.getRefrigeratorByRefrigeratorId(this.state.id);
+        if(response.statusCode === 200){
+           const message = response.message.message;
+           this.setState({refrigeratorInfo : message})
+        }
+    }
     onSetSidebarOpen=(open)=> {
         this.setState({ sidebarOpen: open });
-      }
+    }
+  
     getAllItems = async ()=>{
         const response = await backendAPI.getAllItemsInRefrigerator(this.state.id);
-        console.log("response",response.message.message);
         if(response.statusCode === 200){
             this.setState({
                 allItems : response.message.message,
@@ -134,7 +150,6 @@ export default class ShowRefrigerator extends React.Component{
         });
       }
     render(){
-        console.log(this.state.showingCalender);
         return(
         <div>
             <Sidebar
@@ -182,7 +197,11 @@ export default class ShowRefrigerator extends React.Component{
               </Form>
               </Navigationbar>  
 
-             
+             <div className="users-access">
+                {this.state.refrigeratorInfo["isOwner"] ?
+                    <UserAccess refInfo = {this.state.refrigeratorInfo} /> : null    
+                }
+             </div>
 
             <div className = "refrigerator-items">
             
@@ -195,14 +214,17 @@ export default class ShowRefrigerator extends React.Component{
          <Button block className="add-buttons"  onClick = {()=>{this.createRefrigeratorItemModal()}}>Add Refrigerator Item</Button>
             <div className = "toggle-calendar">
             <span>Normal</span>
-            <Switch onChange={this.toggleShowCalendar} 
+            <Switch
+            height = {window.innerWidth *0.015}
+            width = {window.innerWidth * 0.04}
+            className="toggle-calendar-switch" onChange={this.toggleShowCalendar} 
             checked={this.state.showingCalender}
              />
             <span>Calendar</span>
              </div><hr />
              {this.state.showingCalender ?  
              <FullCalendar
-             width = {window.innerWidth*0.6}
+             width = {window.innerWidth*0.7}
              height = {700}
               plugins={[  dayGridPlugin, timeGridPlugin, listPlugin  ]}
               initialView="dayGridMonth"
@@ -210,7 +232,7 @@ export default class ShowRefrigerator extends React.Component{
                  return {
                      title : e["item_name"],
                      start : e["CreatedOn"],
-                     end : e["expiration_date"]
+                     end : e["expiration_date"] ? e["expiration_date"] : "2030-12-12"
                  }
              })}
              />

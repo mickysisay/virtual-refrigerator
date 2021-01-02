@@ -119,21 +119,20 @@ export default class RefrigeratorCard extends React.Component {
         });
     }
     render() {
-        console.log(this.state.refrigerator);
         const t = Date.parse(this.state.refrigerator["CreatedOn"]);
 
         // Apply each element to the Date function
         const d = new Date(t);
         
         return (
-        <Card style={{ width: '18rem' }}>
+        <Card style={{ width: '18rem', height: '12rem' }}>
             <Card.Body onClick={() => { this.props.handleClick(this.state.refrigerator["id"]) }}>
                 <Card.Title>{this.editedRefrigerator} </Card.Title>
                 <Card.Text>
                     Created {timeAgo.format(d)}
                 </Card.Text>
             </Card.Body>
-
+         {this.state.refrigerator.isOwner ?
             <Card.Body>
                 <MDBIcon onClick={this.confirmDelete} icon="trash-alt" className='mr-5' >
                     <Card.Link > Delete</Card.Link>
@@ -142,6 +141,7 @@ export default class RefrigeratorCard extends React.Component {
                 <Card.Link onClick={() => { this.updateRefrigeratorModal()}}> Rename</Card.Link>
              </MDBIcon>
             </Card.Body>
+         : null}
         </Card>);
     }
 }
