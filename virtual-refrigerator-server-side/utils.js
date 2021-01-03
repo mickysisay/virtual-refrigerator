@@ -560,7 +560,7 @@ class BasicUtils {
         }
         const ress =await commonQueries.giveUserAccessToRefrigerator(addingUserId,refrigeratorId);
         if(!ress){
-            res.status(500).json({success:res , message:"something went wrong"});
+            res.status(500).json({status:ress , message:"something went wrong"});
             return;
         }
         res.json({success:ress , message:"gave access successfully"});
@@ -595,10 +595,10 @@ class BasicUtils {
         }
         const ress =await commonQueries.takeAccessAway(removingUserId,refrigeratorId);
         if(!ress){
-            res.status(500).json({success:res , message:"something went wrong"});
+            res.status(500).json({status:ress , message:"something went wrong"});
             return;
         }
-        res.json({success:ress , message:"removed access successfully"});
+        res.json({status:ress , message:"removed access successfully"});
     }
     static async getPersonalItem(req,res){
         const data = await this.getInfoFromToken(req);

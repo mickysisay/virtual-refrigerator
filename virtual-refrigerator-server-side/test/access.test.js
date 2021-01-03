@@ -1,9 +1,9 @@
 const request= require('supertest');
-const app = require('../app');
+const app = require('../controllers/access');
 const commonQueries = require('../mysql/commonQueries')
 const { test, expect,describe } = require('@jest/globals');
 const BasicUtils = require('../utils');
-const endPoint = "/api/access";
+const endPoint = "/api/access/";
 const users = [];
 const userInfos = [{
     "username" : "someuser11",
@@ -31,7 +31,7 @@ beforeAll(async ()=>{
     }
     //login and add jwt to users array
     for(let i=0; i <users.length; i++){
-        const response = await request(app).post("/api/signup").send({
+        const response = await request(app).post("/api/login").send({
             "username" : userInfos[i].username,
             "password" : userInfos[i].password
         });
@@ -40,10 +40,10 @@ beforeAll(async ()=>{
     }
    //create refrigerator
    const response = await request(app).post("/api/refrigerator/add")
-   .send({"name":"something"})
+   .send({"refrigeratorName":"something"})
    .set("authorization", users[0].jwtToken);
    //add it to refrigerators array
-   refrigerators.push(response.body);
+   refrigerators.push(response.body.refrigerator);
 });
 
 describe('give/remove access tests', ()=>{
@@ -55,15 +55,15 @@ describe('give/remove access tests', ()=>{
         const response = await request(app).post(endPoint+"remove");
         expect(response.statusCode).toBe(401);    
      });
-     test('should return a 400 error if refrigerator id doesn\'t exist when trying to give access', async ()=>{
+     test('should return a 404 error if refrigerator id doesn\'t exist when trying to give access', async ()=>{
         const response = await request(app).post(endPoint+"give").set("authorization", users[0].jwtToken)
         .send({"refrigerator_id" : "non-existant","user_id":users[1].id});
-        expect(response.statusCode).toBe(400);    
+        expect(response.statusCode).toBe(404);    
      });
-     test('should return a 400 error if refrigerator id doesn\'t exist when trying to rmeove access', async ()=>{
+     test('should return a 404 error if refrigerator id doesn\'t exist when trying to rmeove access', async ()=>{
         const response = await request(app).post(endPoint+"remove").set("authorization", users[0].jwtToken)
         .send({"refrigerator_id" : "non-existant","user_id":users[1].id});
-        expect(response.statusCode).toBe(400);    
+        expect(response.statusCode).toBe(404);    
      });
      test('should return a 400 error if user doesn\'t exist when trying to give access', async ()=>{
         const response = await request(app).post(endPoint+"give").set("authorization", users[0].jwtToken)
@@ -75,15 +75,15 @@ describe('give/remove access tests', ()=>{
         .send({"refrigerator_id" : refrigerators[0].id,"user_id":"non-existant"});
         expect(response.statusCode).toBe(400);    
      });
-     test('should return a 403 error if trying to give access to refrigerator you dont own', async ()=>{
+     test('should return a 404 error if trying to give access to refrigerator you dont own', async ()=>{
         const response = await request(app).post(endPoint+"give").set("authorization", users[1].jwtToken)
         .send({"refrigerator_id" : refrigerators[0].id,"user_id": users[2].id});
-        expect(response.statusCode).toBe(403);    
+        expect(response.statusCode).toBe(404);    
      });
-     test('should return a 403 error if trying to remove access from refrigerator you dont own', async ()=>{
+     test('should return a 404 error if trying to remove access from refrigerator you dont own', async ()=>{
         const response = await request(app).post(endPoint+"remove").set("authorization", users[1].jwtToken)
         .send({"refrigerator_id" : refrigerators[0].id,"user_id": users[2].id});
-        expect(response.statusCode).toBe(403);    
+        expect(response.statusCode).toBe(404);    
      });
      test('should return a 400 error if trying to give access to yourself', async ()=>{
         const response = await request(app).post(endPoint+"give").set("authorization", users[0].jwtToken)
@@ -100,15 +100,15 @@ describe('give/remove access tests', ()=>{
         .send({"refrigerator_id" : refrigerators[0].id,"user_id": users[1].id});
         expect(response.statusCode).toBe(200);    
      });
-     test('should return a 400 error when trying to give access to someone with access', async ()=>{
+     test('should return a 403 error when trying to give access to someone with access', async ()=>{
         const response = await request(app).post(endPoint+"give").set("authorization", users[0].jwtToken)
         .send({"refrigerator_id" : refrigerators[0].id,"user_id": users[1].id});
-        expect(response.statusCode).toBe(400);    
+        expect(response.statusCode).toBe(403);    
      });
-     test('should return a 400 error when trying to remove access from someone who doesn\'t have access', async ()=>{
+     test('should return a 500 error when trying to remove access from someone who doesn\'t have access', async ()=>{
         const response = await request(app).post(endPoint+"remove").set("authorization", users[0].jwtToken)
         .send({"refrigerator_id" : refrigerators[0].id,"user_id": users[2].id});
-        expect(response.statusCode).toBe(400);    
+        expect(response.statusCode).toBe(500);    
      });
 
      //end
@@ -124,6 +124,6 @@ afterAll(async done => {
     for(let i=0; i<users.length; i++){
      await commonQueries.deleteByUserId(users[i].id);
     }   
-    const response = await request(app).post("api/refrigerator/remove/" + refrigerators[0].id).set("authorization", users[0].jwtToken); 
+    await commonQueries.deleteRefrigeratorByUserIdAndRefrigeratorId(users[0].id,refrigerators[0].id);
      done();
  });

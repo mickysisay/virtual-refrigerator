@@ -73,21 +73,12 @@ describe('refrigerator add/remove tests', ()=>{
 
      test('should return a 404 error if refrigerator id is not valid when getting refrigerator ', async ()=>{
         const response = await request(app).get(endPoint+"100").set("authorization", users[0].jwtToken);
-        expect(response.statusCode).toBe(404);    
+        expect(response.statusCode).toBe(403);    
      });
      test('should return a 404 error if refrigerator id is not valid when deleting refrigerator ', async ()=>{
         const response = await request(app).post(endPoint+"remove/").set("authorization", users[0].jwtToken);
         expect(response.statusCode).toBe(404);    
      });
-   //   test('should return a 403 error if user doesn\'t have access to refrigerator when trying to get it ', async ()=>{
-   //      const response = await request(app).get(endPoint + refrigerators[0].id).set("authorization", users[1].jwtToken);
-   //      expect(response.statusCode).toBe(403);    
-   //   });
-   //   test('should return a 403 error if user doesn\'t have access to refrigerator when trying to delete it ', async ()=>{
-   //      const response = await request(app).post(endPoint+"remove/" + refrigerators[0].id).set("authorization", users[1].jwtToken);
-   //      expect(response.statusCode).toBe(403);    
-   //   });
-
 
      test('should return a 200 ok message if user has access to refrigerator when trying to get it ', async ()=>{
         const response = await request(app).get(endPoint+ refrigerators[0].id).set("authorization", users[0].jwtToken);

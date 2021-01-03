@@ -3,6 +3,7 @@ const app = require('../controllers/items');
 const commonQueries = require('../mysql/commonQueries')
 const { test, expect,describe } = require('@jest/globals');
 const BasicUtils = require('../utils');
+const { response } = require('express');
 const endPoint = "/api/item/";
 const users = [];
 const userInfos = [{
@@ -31,7 +32,7 @@ beforeAll(async ()=>{
     }
     //login and add jwt to users array
     for(let i=0; i <users.length; i++){
-        const response = await request(app).post("/api/signup").send({
+        const response = await request(app).post("/api/login").send({
             "username" : userInfos[i].username,
             "password" : userInfos[i].password
         });
@@ -39,11 +40,11 @@ beforeAll(async ()=>{
         users[i].jwtToken = jwt; 
     }
    //create refrigerator
-   const response = await request(app).post("/api/refrigerator/add")
-   .send({"name":"something"})
+   const respons = await request(app).post("/api/refrigerator/add")
+   .send({"refrigeratorName":"something"})
    .set("authorization", users[0].jwtToken);
    //add it to refrigerators array
-   refrigerators.push(response.body);
+   refrigerators.push(respons.body.refrigerator);
 });
 
 describe('item path test', () =>{
@@ -57,29 +58,29 @@ describe('item path test', () =>{
         const response = await request(app).post(endPoint+"add").set("authorization", users[0].jwtToken);
         expect(response.statusCode).toBe(400);    
      });
-     test('should return a 404 error if refrigerator doesn\'t exist when adding item', async ()=>{
+     test('should return a 403 error if refrigerator doesn\'t exist when adding item', async ()=>{
         const response = await request(app).post(endPoint+"add").set("authorization", users[0].jwtToken)
         .send({
             "refrigerator_id" : "non-existant",
             "item_name" : "something"
         });
-        expect(response.statusCode).toBe(404);    
+        expect(response.statusCode).toBe(403);    
      });
-     test('should return a 404 error if refrigerator doesn\'t exist when removing item', async ()=>{
+     test('should return a 400 error if refrigerator doesn\'t exist when removing item', async ()=>{
         const response = await request(app).post(endPoint+"remove").set("authorization", users[0].jwtToken)
         .send({
             "refrigerator_id" : "non-existant",
             "item_id" : "some_id"
         });
-        expect(response.statusCode).toBe(404);    
+        expect(response.statusCode).toBe(400);    
      });
-     test('should return a 404 error if item id isn\'t valid exist when removing item', async ()=>{
+     test('should return a 400 error if item id isn\'t valid exist when removing item', async ()=>{
         const response = await request(app).post(endPoint+"remove").set("authorization", users[0].jwtToken)
         .send({
             "refrigerator_id" : refrigerators[0].id,
             "item_id" : "some_id"
         });
-        expect(response.statusCode).toBe(404);    
+        expect(response.statusCode).toBe(400);    
      });
      test('should return a 403 error if user doesn\'t have access to refrigerator when adding item' , async ()=>{
         const response = await request(app).post(endPoint+"add").set("authorization", users[1].jwtToken)
@@ -89,28 +90,28 @@ describe('item path test', () =>{
         });
         expect(response.statusCode).toBe(403);    
      });
-     test('should return a 403 error if user doesn\'t have access to refrigerator when removing item' , async ()=>{
+     test('should return a 400 error if user doesn\'t have access to refrigerator when removing item' , async ()=>{
         const response = await request(app).post(endPoint+"remove").set("authorization", users[1].jwtToken)
         .send({
             "refrigerator_id" : refrigerators[0].id,
             "item_name" : "something"
         });
-        expect(response.statusCode).toBe(403);    
+        expect(response.statusCode).toBe(400);    
      });
      test('should return a 200 sucess if everything is fine when adding item' , async ()=>{
         const response = await request(app).post(endPoint+"add").set("authorization", users[0].jwtToken)
         .send({
             "refrigerator_id" : refrigerators[0].id,
-            "item_name" : "something"
+            "item_name" : "somethingggggg"
         });
-        refrigerators[0] = response.body;
+        refrigerators[0]["items"] = response.body.message;
         expect(response.statusCode).toBe(200);    
      });
      test('should return a 200 sucess if everything is fine when removing item' , async ()=>{
-        const response = await request(app).post(endPoint+"add").set("authorization", users[0].jwtToken)
+        const response = await request(app).post(endPoint+"remove").set("authorization", users[0].jwtToken)
         .send({
             "refrigerator_id" : refrigerators[0].id,
-            "item_id" : refrigerators[0].items[0].id
+            "id" : refrigerators[0].items[0].id
         });
         
         expect(response.statusCode).toBe(200);    
@@ -125,6 +126,7 @@ afterAll(async done => {
     for(let i=0; i<users.length; i++){
      await commonQueries.deleteByUserId(users[i].id);
     }   
-    const response = await request(app).post("api/refrigerator/remove/" + refrigerators[0].id).set("authorization", users[0].jwtToken); 
+     await commonQueries.deleteRefrigeratorByUserIdAndRefrigeratorId(users[0].id,refrigerators[0].id);
+
      done();
  });
