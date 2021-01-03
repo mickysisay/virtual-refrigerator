@@ -74,7 +74,13 @@
     width:30%;
 }
 .individual-results {
-
+   
+    border-bottom: 2px solid rgb(204, 189, 189);
+    padding-bottom: 1vw;
+    padding-top:0.5vw;
+}
+.individual-results-unable{
+    color:grey;
     border-bottom: 2px solid rgb(204, 189, 189);
     padding-bottom: 1vw;
     padding-top:0.5vw;
@@ -93,6 +99,9 @@
     border-radius:5px;
     box-shadow: 1px 2px #888888;
     font-family: 'Times New Roman', Times, serif;
+}
+.fa{
+    cursor: pointer;
 }
 .home-button{
     display: flex;

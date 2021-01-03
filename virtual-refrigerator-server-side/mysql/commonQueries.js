@@ -72,6 +72,23 @@ const doesEmailExist = async (email) =>{
     result = JSON.parse(result);  
     return result.length!==0;
 }
+const doesUserExistById = async (id) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT `username` FROM `users` WHERE `id` = ?  ',
+        timeout: 40000,
+        values:[id]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);  
+    return result.length!==0;
+}
 const findByUsername = async (username) =>{
     let connection = openConnection();
     if(!connection){
@@ -563,11 +580,10 @@ const takeAccessAway  = async (userId,refrigeratorId) =>{
         timeout: 40000,
         values:[refrigeratorId,userId]
     });
-    const result2  = await getUsersWithAccess(query,refrigeratorId);
     connection.end();
     result = JSON.stringify(result);
     result = JSON.parse(result);
-    return {success: result.affectedRows,message : result2};
+    return result.affectedRows !==0;
 }
 const giveUserAccessToRefrigerator = async (addedUserId,refrigeratorId) => {
     let connection = openConnection();
@@ -577,15 +593,14 @@ const giveUserAccessToRefrigerator = async (addedUserId,refrigeratorId) => {
     }
     const query = util.promisify(connection.query).bind(connection);
     let result = await query({
-        sql : 'INSERT INTO `users_access (`refrigerator_id`,`user_id`) values (?,?)' ,
+        sql : 'INSERT INTO `users_access` (`refrigerator_id`,`user_id`) values (?,?)' ,
         timeout: 40000,
         values:[refrigeratorId,addedUserId]
     });
-    const result2  = await getUsersWithAccess(query,refrigeratorId);
     connection.end();
     result = JSON.stringify(result);
     result = JSON.parse(result);
-    return {success: result.affectedRows,message : result2};
+    return result.affectedRows !==0;
 }
 const searchUsers = async (name) =>{
     const newName = `%${name}%`
@@ -612,6 +627,7 @@ module.exports = {
     addUserToDatabase: addUserToDatabase,
     doesUsernameExist : doesUsernameExist,
     doesEmailExist : doesEmailExist,
+    doesUserExistById:doesUserExistById,
     findByUsername : findByUsername,
     deleteByUserId : deleteByUserId,
     getAllRefrigeratorsByUserId:getAllRefrigeratorsByUserId,

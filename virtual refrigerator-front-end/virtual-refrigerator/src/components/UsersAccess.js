@@ -20,7 +20,7 @@ export default class UserAccess extends React.Component {
     componentDidMount(){
         this.getAllowedUsers();
         document.body.addEventListener('click',(e)=>{
-            if(!e.target.classList.contains('individual-results')){
+            if(!e.target.classList.contains('individual-results-unable')){
                 this.removeSearchResults();
             }
         });
@@ -56,8 +56,81 @@ export default class UserAccess extends React.Component {
         });
         this.setState({searchedUsers : arrUsers});
     }
+    unShareRefrigerator = async(e)=>{
+        const data = {
+            "refrigerator_id" : this.state.refInfo["id"],
+            "user_id" : e["id"]
+        }
+        const response = await backendAPI.takeAccessAway(data);
+        if(response.statusCode === 200){
+            this.getAllowedUsers();
+            NotificationManager.success('Success message', response.message.message, 1000, () => {
+                alert('callback');
+            });  
+        }else{
+            NotificationManager.error('Error message', response.message.message, 1000, () => {
+                alert('callback');
+            });  
+        }
+    }
+    shareRefrigerator = async (e) =>{
+        const data = {
+            "refrigerator_id" : this.state.refInfo["id"],
+            "user_id" : e["id"]
+        }
+        const response = await backendAPI.giveUserAccess(data);
+        if(response.statusCode === 200){
+            this.getAllowedUsers();
+            NotificationManager.success('Success message', response.message.message, 1000, () => {
+                alert('callback');
+            });  
+        }else{
+            NotificationManager.error('Error message', response.message.message, 1000, () => {
+                alert('callback');
+            });  
+        }
+    }
+    confirmRemoveAccess = (e) =>{
+        confirmAlert({
+            customUI: ({ onClose }) => {
+                return (
+                    <div>
+                     <Modal.Dialog>
+                     <Modal.Header closeButton onClick = {onClose}>
+                            <Modal.Title>Unshare refrigerator</Modal.Title>
+                        </Modal.Header>
 
-    confirmShare = () =>{
+                        <Modal.Body>
+                <p>Are you sure you want to unshare "{this.state.refInfo["refrigerator_name"]}" from "{
+                    e["username"]
+                }"?</p>
+                        </Modal.Body>
+
+                         <Modal.Footer>
+                             <Button variant="primary" onClick= {onClose}>No</Button>
+                            <Button variant="danger" onClick={()=>{this.unShareRefrigerator(e)
+                            onClose()}}>Unshare</Button>
+                        </Modal.Footer>
+                     </Modal.Dialog>
+                    </div>
+                );
+            }
+        });
+    }
+
+    confirmShare = (e) =>{
+        if(e["sharedStatus"] === "owner"){
+            NotificationManager.error('Error message', "Can't share to Owner", 1000, () => {
+                alert('callback');
+            });
+            return;
+        }else if(e["sharedStatus"] === "shared"){
+            NotificationManager.error('Error message', "Already shared with this person", 1000, () => {
+                alert('callback');
+            });
+            return
+        }
+
         confirmAlert({
             customUI: ({ onClose }) => {
                 return (
@@ -73,7 +146,7 @@ export default class UserAccess extends React.Component {
 
                          <Modal.Footer>
                              <Button variant="secondary" onClick= {onClose}>No</Button>
-                            <Button variant="primary" onClick={()=>{this.shareRefrigerator()
+                            <Button variant="primary" onClick={()=>{this.shareRefrigerator(e)
                             onClose()}}>Share</Button>
                         </Modal.Footer>
                      </Modal.Dialog>
@@ -82,9 +155,9 @@ export default class UserAccess extends React.Component {
             }
         });
        }
-       removeSearchResults = () =>{
-        this.setState({searchName:"",searchedUsers:[]})
-       }
+  removeSearchResults = () =>{
+         this.setState({searchName:"",searchedUsers:[]})
+   }
 
     render(){
         return(<div>
@@ -103,8 +176,9 @@ export default class UserAccess extends React.Component {
                     return (
                     <div 
                     key={`id-${e["id"]}`} 
-                    onClick={this.confirmShare}
-                    className = "individual-results">{e["username"]}</div>
+                    onClick={(c) => this.confirmShare(e)}
+                    className = {e["sharedStatus"] === "notShared" ? "individual-results":
+                    "individual-results-unable"}>{e["username"]}</div>
                     );
                 })
                 : this.state.searchName.trim()==="" ? null : <div className = "no-users">No Users found</div>}
@@ -115,7 +189,7 @@ export default class UserAccess extends React.Component {
             {this.state.allowedUsers.length === 0 ? "shared with no users" : 
             this.state.allowedUsers.map((e)=>{return <div className="already-shared" key={e.id}>
                 <div>{e.username}</div>
-                <MDBIcon icon="times" />
+                <MDBIcon onClick = {()=>{this.confirmRemoveAccess(e)}} icon="times" />
                 </div> })
         }</div></div>
         <NotificationContainer />

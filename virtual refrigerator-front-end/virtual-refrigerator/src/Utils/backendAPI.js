@@ -228,6 +228,17 @@ const searchUsers = async (username) =>{
     const response = await getRequestsWithToken(endpoint);
     return response;
 }
+const giveUserAccess = async (data) =>{
+    const endpoint = APPURL+"access/give";
+    const response = await postRequestsWithToken(endpoint,data);
+    return response;
+}
+const takeAccessAway = async (data) =>{
+    const endpoint = APPURL + "access/remove";
+    const response = await postRequestsWithToken(endpoint,data);
+    return response;
+}
+
 const backendAPI = {
     postRequestsWithToken : postRequestsWithToken,
     getRequestsWithToken : getRequestsWithToken,
@@ -249,7 +260,9 @@ const backendAPI = {
     takeItemOutOFRefrigerator : takeItemOutOFRefrigerator,
     getAllUsersWithAccess : getAllUsersWithAccess,
     getRefrigeratorByRefrigeratorId : getRefrigeratorByRefrigeratorId,
-    searchUsers: searchUsers
+    searchUsers: searchUsers,
+    giveUserAccess : giveUserAccess,
+    takeAccessAway: takeAccessAway
 }
 
 export default backendAPI;

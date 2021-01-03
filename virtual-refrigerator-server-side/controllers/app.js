@@ -1,11 +1,11 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const basicUtils = require('./utils');
+const basicUtils = require('../utils');
 const bodyParser = require('body-parser');
-const constants = require('./constants');
+const constants = require('../constants');
 const bcrypt = require('bcrypt');
-const { hashPassword } = require('./utils');
-const commonQueries = require('./mysql/commonQueries')
+const { hashPassword } = require('../utils');
+const commonQueries = require('../mysql/commonQueries')
 //const SECRETKEY= "secret";
 const cors = require('cors');
 

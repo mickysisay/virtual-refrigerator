@@ -1,4 +1,4 @@
-const app = require('../app')
+const app = require('./app')
 const basicUtils = require('../utils');
 
 app.get("/api/refrigerator",basicUtils.verifyToken,async (req,res)=>{

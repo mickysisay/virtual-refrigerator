@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const { v1: uuidv1 } = require('uuid');
 const commonQueries = require('./mysql/commonQueries');
 const moment = require('moment');
+const { getRefrigeratorByUserIdAndRefrigeratorId } = require('./mysql/commonQueries');
 
 class BasicUtils {
 
@@ -275,7 +276,7 @@ class BasicUtils {
         }
         const userId = data.user.id;
         const refrigeratorId = req.query["refrigerator_id"];
-        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        const hasAccess = await this.canUserAddToRefrigerator(userId,refrigeratorId);
         if(!hasAccess){
             res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
             return;
@@ -298,7 +299,7 @@ class BasicUtils {
             return;
         }
         //check if user has access to refrigerator
-        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        const hasAccess = await this.canUserAddToRefrigerator(userId,refrigeratorId);
         if(!hasAccess){
             res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
             return;
@@ -401,7 +402,7 @@ class BasicUtils {
             res.status(400).json({status:false,message:"quantity is missing"});
             return;
         }
-        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        const hasAccess = await this.canUserAddToRefrigerator(userId,refrigeratorId);
         if(!hasAccess){
             res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
             return;
@@ -450,7 +451,7 @@ class BasicUtils {
             return;
         }
         //check if user has access to refrigerator
-        const hasAccess = this.canUserAddToRefrigerator(userId,refrigeratorId);
+        const hasAccess = await this.canUserAddToRefrigerator(userId,refrigeratorId);
         if(!hasAccess){
             res.status(403).json({status:false,message:"User doesn't have access to refrigerator"});
             return;
@@ -523,6 +524,81 @@ class BasicUtils {
         }
         res.json({status:response.success,message:response.response});
 
+    }
+    static async giveUserAccess(req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const refrigeratorId = req.body["refrigerator_id"];
+        const addingUserId = req.body["user_id"]
+        if(typeof refrigeratorId !== "string" || typeof addingUserId !== "string"){
+            res.status(400).json({status:false,message:"refrigerator id doesn't exist."});
+            return;
+        }
+        const userId = data.user.id;
+        if(userId === addingUserId){
+            res.status(400).json({status:false,message:"can't give yourself access"});
+            return;
+        }
+        const response = await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId); 
+        if(response.length===0){
+            res.status(404).json({status:false,message:"no refrigerator found"});
+            return;
+        }
+        //make sure id is legit
+        const isUserLegit = await commonQueries.doesUserExistById(addingUserId);
+        if(!isUserLegit){
+            res.status(400).json({status:false,message:"no user found with that id"});
+            return;
+        }
+        const hasAccess = await this.canUserAddToRefrigerator(addingUserId,refrigeratorId);
+        if(hasAccess){
+            res.status(403).json({status:false,message:"User already has access to refrigerator"});
+            return;
+        }
+        const ress =await commonQueries.giveUserAccessToRefrigerator(addingUserId,refrigeratorId);
+        if(!ress){
+            res.status(500).json({success:res , message:"something went wrong"});
+            return;
+        }
+        res.json({success:ress , message:"gave access successfully"});
+    }
+    static async takeAccessAway (req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const refrigeratorId = req.body["refrigerator_id"];
+        const removingUserId = req.body["user_id"]
+        if(typeof refrigeratorId !== "string" || typeof removingUserId !== "string"){
+            res.status(400).json({status:false,message:"refrigerator id doesn't exist."});
+            return;
+        }
+        const userId = data.user.id;
+        if(userId === removingUserId){
+            res.status(400).json({status:false,message:"can't remove access from yourself"});
+            return;
+        }
+        const response = await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId); 
+        if(response.length===0){
+            res.status(404).json({status:false,message:"no refrigerator found"});
+            return;
+        }
+        //make sure id is legit
+        const isUserLegit = await commonQueries.doesUserExistById(removingUserId);
+        if(!isUserLegit){
+            res.status(400).json({status:false,message:"no user found with that id"});
+            return;
+        }
+        const ress =await commonQueries.takeAccessAway(removingUserId,refrigeratorId);
+        if(!ress){
+            res.status(500).json({success:res , message:"something went wrong"});
+            return;
+        }
+        res.json({success:ress , message:"removed access successfully"});
     }
     static async getPersonalItem(req,res){
         const data = await this.getInfoFromToken(req);

@@ -1,7 +1,7 @@
 const { test, expect,describe } = require('@jest/globals');
 const { response } = require('express');
 const request= require('supertest');
-const app = require('../app');
+const app = require('../controllers/app');
 const commonQueries = require('../mysql/commonQueries')
 const users = {
    inValid : {
