@@ -32,7 +32,7 @@ const postRequestsWithToken = async (endpoint, data )=>{
      }catch(e){
         const resp = e.response;
         console.log(e);
-     if(resp){
+     if(resp !== undefined){
         if(resp.status === 401){
           const responsee = await checkToken();
           return responsee;
@@ -64,6 +64,13 @@ const checkToken = async ()=>{
      }catch(e){
          
      const resp = e.response;
+     if(resp === undefined){
+        localStorage.removeItem("token");
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("checkToken");
+        window.location.reload(); 
+        return {statusCode : resp.status , message:"something wrong with token"}
+     }
      if(resp.status === 401){
       localStorage.removeItem("token");
       localStorage.removeItem("userInfo");
@@ -96,6 +103,15 @@ const getRequestsWithToken = async (endpoint,data = {}) =>{
         return {statusCode : 200, message : resp.data};
      }catch(e){
         const resp = e.response;
+        if(resp !== undefined){
+            if(resp.status === 401){
+              const responsee = await checkToken();
+              return responsee;
+            }
+        }else{
+            const responsee = await checkToken();
+              return responsee;
+        }
         if(resp.status === 401){
           const responsee = await checkToken();
           return responsee;

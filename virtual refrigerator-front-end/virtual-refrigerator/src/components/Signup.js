@@ -257,6 +257,14 @@ export default class SignUp extends React.Component {
                                                     data-testid="username" />
                                                       <p className="error-message"
                                                       data-testid="usernameError">{this.state.username.error}</p>
+                                                       <MDBInput label="Email" icon="at" group type="email" validate
+                                                    id="email" onChange={(e) => { this.handleInputChange(e) }}
+                                                    onBlur={(e) => {
+                                                        this.handleBlurEmail(e);
+                                                    }} 
+                                                    data-testid="email"/>
+                                                      <p className="error-message"
+                                                      data-testid="emailError">{this.state.email.error}</p>
                                                 <MDBInput label="Password" icon="lock" group type="password" validate
                                                     id="password" onChange={(e) => { this.handleInputChange(e) }}
                                                     onBlur={(e) => {
@@ -273,14 +281,7 @@ export default class SignUp extends React.Component {
                                                     data-testid="confirmPassword"/>
                                                       <p className="error-message"
                                                       data-testid="confirmPasswordError">{this.state.confirmPassword.error}</p>
-                                                 <MDBInput label="Email" icon="at" group type="email" validate
-                                                    id="email" onChange={(e) => { this.handleInputChange(e) }}
-                                                    onBlur={(e) => {
-                                                        this.handleBlurEmail(e);
-                                                    }} 
-                                                    data-testid="email"/>
-                                                      <p className="error-message"
-                                                      data-testid="emailError">{this.state.email.error}</p>
+                                                
                                             </div>
                                             <div className="text-center">
                                                 <MDBBtn onClick={(e) => { this.handleSignupSubmit(e) }}

@@ -492,24 +492,28 @@ const changeStatusOfExpiredItems = async () =>{
     const normal ="NORMAL";
     const expired = "EXPIRED";
     const query = util.promisify(connection.query).bind(connection);
+    let expiredRefrigerators = await query({
+        sql : 'SELECT * from `items` WHERE `expiration_date`  <=  NOW() AND `status` = ?',
+        timeout : 10000,
+        values : [normal]
+    })
     let result = await query({
         sql : 'UPDATE `items` SET  `status` = ? ' +
         'WHERE `expiration_date`  <=  NOW() AND `status` = ?',
-        timeout: 40000,
+        timeout: 10000,
         values:[expired,normal]
     });
     let results2 = await query({
         sql : 'UPDATE `items` SET  `status` = ? ' +
         'WHERE `expiration_date`  > NOW() AND `status` = ?',
-        timeout: 40000,
+        timeout: 10000,
         values:[normal,expired]
     }); 
+    
     connection.end();
-    results2 = JSON.stringify(results2);
-    results2 = JSON.parse(results2);
-    result = JSON.stringify(result);
-    result = JSON.parse(result);
-    return result.affectedRows + results2.affectedRows; 
+    expiredRefrigerators = JSON.stringify(expiredRefrigerators);
+    expiredRefrigerators = JSON.parse(expiredRefrigerators);
+    return expiredRefrigerators; 
 }
 const doesUserHasAccessToRefrigerator = async(userId,refrigeratorId) => {
     let connection = openConnection();
@@ -622,6 +626,47 @@ const searchUsers = async (name) =>{
     result = JSON.parse(result);
     return result;
 }
+const getUserIdsFromRefrigeratorIds = async (refArray) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT `id`,`refrigerator_name`,`owner_id` from `refrigerators` WHERE `id` IN (?)',
+        timeout: 40000,
+        values:[refArray]
+    });
+    let result2 = await query({
+        sql : 'SELECT `refrigerator_id`,`user_id` from `users_access` WHERE `refrigerator_id` IN (?)',
+        timeout: 40000,
+        values:[refArray]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    result2 = JSON.stringify(result2);
+    result2 = JSON.parse(result2);
+    return [...result,...result2];
+}
+const getUserEmailsFromUserIds =async (idArray) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT `email` from `users` WHERE `id` IN (?)',
+        timeout: 40000,
+        values:[idArray]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
 
 module.exports = {
     addUserToDatabase: addUserToDatabase,
@@ -653,5 +698,7 @@ module.exports = {
     takeAccessAway : takeAccessAway,
     searchUsers : searchUsers,
     getRefrigeratorsWithAccess : getRefrigeratorsWithAccess,
-    getAllUsersWithAccess : getAllUsersWithAccess
+    getAllUsersWithAccess : getAllUsersWithAccess,
+    getUserIdsFromRefrigeratorIds,
+    getUserEmailsFromUserIds
 }

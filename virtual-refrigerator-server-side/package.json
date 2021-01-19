@@ -18,6 +18,7 @@
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "node-cron": "^2.0.3",
+    "nodemailer": "^6.4.17",
     "superagent": "^6.1.0",
     "supertest": "^6.0.1",
     "uuid": "^8.3.1"
