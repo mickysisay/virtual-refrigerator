@@ -14,6 +14,7 @@ import {
   Switch,
 } from 'react-router-dom'
 import { Fragment, useState } from 'react';
+import { NotificationContainer } from 'react-notifications';
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
           </Route> */}
 
         </Switch>
+        <NotificationContainer />
       </Router>
     </Fragment>
   );

@@ -1,10 +1,10 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import './login.css'
 import { Button,Modal } from 'react-bootstrap';
-import { MDBInput } from 'mdbreact';
+import { MDBInput,MDBInputGroup } from 'mdbreact';
 import DateTimePicker from 'react-datetime-picker';
 
 
@@ -104,6 +104,7 @@ export default class TakeItem extends React.Component {
                        label="Item name" />
                         <MDBInput
                        value= {this.state.status}
+                       icon = {this.state.status === "EXPIRED" ? "exclamation-triangle" : null}
                        disabled
                        label="Status" />
                         
@@ -127,7 +128,7 @@ export default class TakeItem extends React.Component {
                            <Button variant="primary" onClick={()=>{this.takeItem(this.props.onClose)
                            }}>Take Item</Button>
                        </Modal.Footer>
-                    </Modal.Dialog><NotificationContainer /></div> 
+                    </Modal.Dialog></div> 
         );
     }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import ItemScanner from './ItemScanner'
 import { MDBInput,MDBInputGroup } from "mdbreact";
 import 'bootstrap/dist/css/bootstrap.css'
@@ -151,7 +151,7 @@ handleExpirationDateChange =(e) =>{
               </Modal.Dialog>
             
           {/* <ItemScanner setBarCode = {this.setBarCode}/> */}
-          <NotificationContainer /></div>);
+          </div>);
       }else{
           return( <div id="outPopUp" >   
               <Button variant="primary" onClick = {()=>{

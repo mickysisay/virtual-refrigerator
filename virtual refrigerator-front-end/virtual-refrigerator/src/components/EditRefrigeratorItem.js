@@ -1,7 +1,7 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import './login.css'
 import { Button,Modal } from 'react-bootstrap';
 import { MDBInput } from 'mdbreact';
@@ -142,7 +142,7 @@ export default class EditRefrigeratorItem extends React.Component {
                            <Button variant="primary" onClick={()=>{this.editItemConfirm(this.props.onClose)
                            }}>edit Item</Button>
                        </Modal.Footer>
-                    </Modal.Dialog><NotificationContainer /></div> 
+                    </Modal.Dialog></div> 
 
         );
     }

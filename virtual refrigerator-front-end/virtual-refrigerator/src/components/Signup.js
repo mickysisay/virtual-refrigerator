@@ -7,7 +7,7 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './login.css'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 
 export default class SignUp extends React.Component {
 
@@ -301,7 +301,6 @@ export default class SignUp extends React.Component {
                             </MDBCol>
                         </MDBRow>
                     </MDBContainer>
-                    <NotificationContainer />
                 </div>
 
             </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import {  NotificationManager } from 'react-notifications';
 import './login.css'
 import { Button,Modal } from 'react-bootstrap';
 import { MDBInput,MDBIcon,MDBFormInline } from 'mdbreact';
@@ -192,7 +192,6 @@ export default class UserAccess extends React.Component {
                 <MDBIcon onClick = {()=>{this.confirmRemoveAccess(e)}} icon="times" />
                 </div> })
         }</div></div>
-        <NotificationContainer />
         </div>)
     }
 }

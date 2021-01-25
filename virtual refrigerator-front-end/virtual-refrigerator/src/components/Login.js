@@ -6,7 +6,7 @@ import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './login.css'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import {  NotificationManager } from 'react-notifications';
 import backendAPI from '../Utils/backendAPI'
 import LoadingOverlay from 'react-loading-overlay';
 export default class Login extends React.Component {
@@ -230,7 +230,7 @@ export default class Login extends React.Component {
                         </MDBCol>
                     </MDBRow>
                 </MDBContainer>
-                <NotificationContainer />
+               
             </div>
 
            

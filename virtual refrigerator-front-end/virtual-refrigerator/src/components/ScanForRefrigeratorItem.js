@@ -1,7 +1,7 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import {  NotificationManager } from 'react-notifications';
 import ItemScanner from './ItemScanner'
 import 'bootstrap/dist/css/bootstrap.css'
 import { Button,Modal} from 'react-bootstrap';
@@ -61,7 +61,7 @@ export default class ScanForRefrigeratorItem extends React.Component {
       return(<div>
            <TakeItem onClose = {this.props.onClose} setItem = {this.props.setItem} item = {this.state.item}/>
           {/* <ItemScanner setBarCode = {this.setBarCode}/> */}
-          <NotificationContainer /></div>);
+          </div>);
       }else{
           return( <div id="outPopUp" >   
               <Button variant="primary" onClick = {async ()=>{

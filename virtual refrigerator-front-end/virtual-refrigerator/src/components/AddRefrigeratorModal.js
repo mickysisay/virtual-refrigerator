@@ -7,6 +7,7 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import {Grid} from '@material-ui/core';
 import { MDBInput } from "mdbreact";
 import './login.css'
+import NotificationManager from "react-notifications/lib/NotificationManager";
 
 export default class AddRefrigeratorModal extends React.Component{
    constructor(props){
@@ -22,7 +23,11 @@ export default class AddRefrigeratorModal extends React.Component{
        }) 
    }
    createRefrigerator = async (close)=>{
-      if(this.state.refrigeratorName.trim().length <5){
+       console.log(this.state);
+      if(this.state.refrigeratorName.trim().length <2){
+        NotificationManager.error('Error message', "Refrigerator name should be atleast 2 characters long", 3000, () => {
+            alert('callback');
+        });
           return;
       } 
       const response = await backendAPI.addRefrigerator(this.state.refrigeratorName);
@@ -31,6 +36,9 @@ export default class AddRefrigeratorModal extends React.Component{
       this.props.updateRef();
       }else{
           //something
+          NotificationManager.error('Error message', response.message.message, 3000, () => {
+            alert('callback');
+        });
       }
    }
    addRefrigeratorModal = () =>{

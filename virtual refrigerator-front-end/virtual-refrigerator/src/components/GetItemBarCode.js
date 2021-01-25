@@ -1,7 +1,7 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import {  NotificationManager } from 'react-notifications';
 import ItemScanner from './ItemScanner'
 
 export default class getItemBarCode extends React.Component {
@@ -36,6 +36,6 @@ export default class getItemBarCode extends React.Component {
     render(){
         return(<div>
             <ItemScanner setBarCode = {this.setBarCode}/>
-            <NotificationContainer /></div>);
+           </div>);
     }
 }

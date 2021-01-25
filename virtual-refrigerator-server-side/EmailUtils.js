@@ -44,18 +44,19 @@ async function getUserIds(obj){
    
    let allRefrigeratorIds =  Object.keys(obj);
    //get all users
-   const results = await commonQueries.getUserIdsFromRefrigeratorIds(allRefrigeratorIds);
+   let results = await commonQueries.getUserIdsFromRefrigeratorIds(allRefrigeratorIds);
+   
    results.forEach(e=>{
-       if(e.refrigerator_name){
            const id = e.id || e.refrigerator_id;
            const user_id = e.user_id || e.owner_id; 
+           if(e.refrigerator_name){
            obj[id].refrigerator_name = e.refrigerator_name;
+           }
            if(typeof obj[id]["user_ids"] === 'object'){
                obj[id]["user_ids"].push(user_id);
            }else{
                obj[id]["user_ids"] = [user_id];
            }
-       }
    })
    return obj;
 }
@@ -65,7 +66,7 @@ async function getUserEmails(obj){
           const emails = await commonQueries.getUserEmailsFromUserIds(obj[e]["user_ids"]);
           let allE = emails.map(e=>e.email)
           const items = obj[e]["items"];
-          const string = `Hi, some Item/s has expired in your ${obj['refrigerator_id']} ,please login and
+          const string = `Hi, some Item/s has expired in your ${obj[e]['refrigerator_name']} ,please login and
           check them out. Here are the expired Items : ${items.join(' , ')}`
           const allEmails = allE.join(',')
           main(string,allEmails);

@@ -1,10 +1,10 @@
 import React from "react";
 import backendAPI from '../Utils/backendAPI'
 import 'react-notifications/lib/notifications.css';
-import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import './login.css'
 import { Card, Button,Modal } from 'react-bootstrap';
-import { MDBIcon,MDBInput } from 'mdbreact';
+import { MDBIcon} from 'mdbreact';
 import { confirmAlert } from 'react-confirm-alert';
 import EditRefrigeratorItem from './EditRefrigeratorItem'
 import TakeItem from './TakeItem'

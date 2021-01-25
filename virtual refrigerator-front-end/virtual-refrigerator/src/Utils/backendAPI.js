@@ -254,7 +254,11 @@ const takeAccessAway = async (data) =>{
     const response = await postRequestsWithToken(endpoint,data);
     return response;
 }
-
+const deletePersonalItem = async (data) =>{
+    const endpoint = APPURL + "personal_item/remove";
+    const response = await postRequestsWithToken(endpoint,data);
+    return response;
+}
 const backendAPI = {
     postRequestsWithToken : postRequestsWithToken,
     getRequestsWithToken : getRequestsWithToken,
@@ -278,7 +282,8 @@ const backendAPI = {
     getRefrigeratorByRefrigeratorId : getRefrigeratorByRefrigeratorId,
     searchUsers: searchUsers,
     giveUserAccess : giveUserAccess,
-    takeAccessAway: takeAccessAway
+    takeAccessAway: takeAccessAway,
+    deletePersonalItem
 }
 
 export default backendAPI;
