@@ -1,67 +1,66 @@
 import React from "react";
-import backendAPI from '../Utils/backendAPI' 
+import backendAPI from '../Utils/backendAPI'
 import RefrigeratorCard from './RefrigeratorCard';
-import {Grid} from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import 'bootstrap/dist/css/bootstrap.css'
 import AddRefrigeratorModal from './AddRefrigeratorModal'
 
-export default class MainPage extends React.Component{
+export default class MainPage extends React.Component {
 
-    constructor (props){
+    constructor(props) {
         super(props);
         this.state = {
-            refrigerators :[],
-            done : false
+            refrigerators: [],
+            done: false
         }
     }
-    saveAllRefrigerators =async ()=>{
-    const response =await backendAPI.getAllRefrigetors();
-    const refrigerators = response.message;
-    if(response.statusCode === 200){
-    this.setState({
-        refrigerators : refrigerators,
-        done : this.state.done ? false : true
-    });
+    saveAllRefrigerators = async () => {
+        const response = await backendAPI.getAllRefrigetors();
+        const refrigerators = response.message;
+        if (response.statusCode === 200) {
+            this.setState({
+                refrigerators: refrigerators,
+                done: this.state.done ? false : true
+            });
 
-    
+
+        }
     }
+    clickRefrigeratorHandle = (id) => {
+        this.props.history.push("/refrigerator/" + id);
     }
-    clickRefrigeratorHandle = (id)=>{
-        this.props.history.push("/refrigerator/"+id);
-    }
-    componentDidMount(){
+    componentDidMount() {
         this.saveAllRefrigerators();
-       //console.log( await backendAPI.checkToken());
     }
 
-  
 
-    render(){
-        
-        
 
-        return(
+    render() {
+
+
+
+        return (
             <div>
-            
+
                 <Grid
                     container
                     direction="row"
                     justify="center"
                     spacing={32}
                     className='mt-5'
-                    >
-                    {this.state.refrigerators.map((e)=>{
-                    return (   <Grid item key={e["id"]}
-           
+                >
+                    {this.state.refrigerators.map((e) => {
+                        return (<Grid item key={e["id"]}
+
                         >
-                   <RefrigeratorCard 
-                   handleClick = {this.clickRefrigeratorHandle} 
-                   updateRef = {this.saveAllRefrigerators}   refrigerator = {e} />
-                   </Grid>)
+                            <RefrigeratorCard
+                                handleClick={this.clickRefrigeratorHandle}
+                                updateRef={this.saveAllRefrigerators} refrigerator={e} />
+                        </Grid>)
                     })}
-                   
+
                 </Grid>
-                <AddRefrigeratorModal  updateRef = {this.saveAllRefrigerators} />
+                <AddRefrigeratorModal updateRef={this.saveAllRefrigerators} />
             </div>
         );
     }

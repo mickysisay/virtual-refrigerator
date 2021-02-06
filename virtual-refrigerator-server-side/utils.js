@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const { v1: uuidv1 } = require('uuid');
 const commonQueries = require('./mysql/commonQueries');
 const moment = require('moment');
-const { getRefrigeratorByUserIdAndRefrigeratorId } = require('./mysql/commonQueries');
 
 class BasicUtils {
 
@@ -37,9 +36,7 @@ class BasicUtils {
            }
        })
     }
-    static async hashPassword(password){
-       
-    }
+    
     static async usernameExists(username){
     
     const res =  await commonQueries.doesUsernameExist(username) 

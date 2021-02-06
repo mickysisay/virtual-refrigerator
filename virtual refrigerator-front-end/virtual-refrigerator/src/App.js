@@ -22,9 +22,8 @@ function App() {
   const [loggingIn, setLoggingIn] = useState(false);
 
   const updateLoggedIn = () => {
-    
+
     const loggedOut = loggingIn ? false : true;
-    console.log(loggedOut);
     setLoggingIn(loggedOut);
   }
 
@@ -58,26 +57,7 @@ function App() {
           <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/logout" component={Logout} />
           <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/" component={MainPage} />
           <AuthenticatedRoute updateLoggedIn={updateLoggedIn} exact path="/refrigerator/:id" component={ShowRefrigerator} />
-          {/* <Route exact path="/">
-            <div className="App">
 
-              <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                  Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <a
-                  className="App-link"
-                  href="https://reactjs.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Learn React
-             </a>
-              </header>
-            </div>
-
-          </Route> */}
 
         </Switch>
         <NotificationContainer />

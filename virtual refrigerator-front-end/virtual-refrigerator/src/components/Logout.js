@@ -1,21 +1,19 @@
 import React from 'react';
 
-import { 
-    Redirect} from 'react-router-dom'
-import { LogOut} from '../Utils/AuthenticatedRoute'
+import { Redirect } from 'react-router-dom'
+import { LogOut } from '../Utils/AuthenticatedRoute'
 
 
-export class Logout extends React.Component{
-   
-  
+export class Logout extends React.Component {
 
-   render(){
-       console.log(this.props);
-      this.props.updateLoggedIn();
-       LogOut()
-       
-       return (
-           <Redirect path="/login" />
-       );
-   }
+
+
+    render() {
+        this.props.updateLoggedIn();
+        LogOut()
+
+        return (
+            <Redirect path="/login" />
+        );
+    }
 }

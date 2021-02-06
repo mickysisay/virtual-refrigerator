@@ -11,12 +11,13 @@ app.post("/api/personal_item/add",basicUtils.verifyToken,async (req,res)=>{
 app.post("/api/personal_item/remove",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.deletePersonalItem(req,res);
 });
-//get personal item
+//get personal item usign id
 
 app.get("/api/personal_item",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.getPersonalItem(req,res);
 });
 
+//get all personal items
 app.get("/api/personal_item/all",basicUtils.verifyToken,async (req,res)=>{
     await basicUtils.getAllPersonalItems(req,res);
 });

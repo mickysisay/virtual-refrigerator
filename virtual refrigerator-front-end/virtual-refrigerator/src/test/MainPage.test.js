@@ -23,3 +23,12 @@ describe ("add refrigerator modal" , ()=>{
         }
     )
 })
+// it("should show a card of the refrigerator" , () =>{
+//     backendAPI.getAllRefrigetors = jest.fn(()=> Promise.resolve([{
+//         statusCode :200,
+//         message : {id:1,refrigerator_name: "something"}
+//     }]))
+//     const mainPage = render(<MainPage />)
+//     mainPage.getByText("something").toBeTruthy();
+
+// })

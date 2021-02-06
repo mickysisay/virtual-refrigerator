@@ -17,8 +17,6 @@ export const AuthenticatedRoute = ({ component: Component, ...rest }) => (
 
 
 export const isAuthorized = function () {
-    // await backendAPI.checkToken();
-    // console.log(localStorage.getItem("token")!== null);
     return localStorage.getItem("token");
 }
 export const LogOut = function () {

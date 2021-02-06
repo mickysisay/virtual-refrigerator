@@ -1,19 +1,18 @@
 import React from "react";
-import LoadingButton from "./LoadingButton"
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBIcon, MDBModalFooter } from 'mdbreact';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'mdbreact/dist/css/mdb.css';
 import './login.css'
 import 'react-notifications/lib/notifications.css';
-import {  NotificationManager } from 'react-notifications';
+import { NotificationManager } from 'react-notifications';
 import backendAPI from '../Utils/backendAPI'
 import LoadingOverlay from 'react-loading-overlay';
 export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
-        
+
         this.state = {
             username: {
                 value: "",
@@ -31,7 +30,7 @@ export default class Login extends React.Component {
         }
     }
     handleInputChange = (e) => {
- 
+
         if (e.target.id === "username") {
             const username = this.state.username;
             username.value = e.target.value;
@@ -45,7 +44,7 @@ export default class Login extends React.Component {
                 password: password
             });
         }
-        
+
     }
     handleBlurUsername = (e) => {
         //const whichInput = e.target.id;
@@ -131,7 +130,7 @@ export default class Login extends React.Component {
             localStorage.setItem("token", token);
             this.props.updateLoggedIn();
             this.props.history.push(referrer);
-           
+
             //redirect to other route
         } else {
             //display error message
@@ -141,13 +140,13 @@ export default class Login extends React.Component {
                     message: message
                 }
             });
-          
-        }
-      
-       
-            this.setState({ isLoading: false });
 
-      
+        }
+
+
+        this.setState({ isLoading: false });
+
+
 
 
 
@@ -170,71 +169,71 @@ export default class Login extends React.Component {
     }
 
     render() {
-        return ( <LoadingOverlay
+        return (<LoadingOverlay
             active={this.state.isLoading}
             spinner
-                text='Loading your content...'
+            text='Loading your content...'
         ><div>
 
-            {/* <div>{!this.state.isLoading ? 
+                {/* <div>{!this.state.isLoading ? 
             //<div>loading</div>
             
             <LoadingButton />
              : null}</div> */}
-            
-            <div className=" login-bar">
-                <MDBContainer className=" mt-5"  >
-                    <MDBRow className="align-middle align-items-center justify-content-center mt-5">
-                        <MDBCol md="6">
-                            <MDBCard >
-                                <MDBCardBody >
-                                    <MDBCardHeader className="form-header deep-blue-gradient rounded">
-                                        <h3 className="my-3">
-                                            <MDBIcon icon="lock" /> Login:
+
+                <div className=" login-bar">
+                    <MDBContainer className=" mt-5"  >
+                        <MDBRow className="align-middle align-items-center justify-content-center mt-5">
+                            <MDBCol md="6">
+                                <MDBCard >
+                                    <MDBCardBody >
+                                        <MDBCardHeader className="form-header deep-blue-gradient rounded">
+                                            <h3 className="my-3">
+                                                <MDBIcon icon="lock" /> Login:
                                          </h3>
-                                    </MDBCardHeader>
-                                    <form onSubmit={(e) => { this.handleLoginSubmit(e) }}>
-                                        <div className="grey-text">
-                                            <MDBInput label="username" icon="user"
-                                                id="username"
-                                                onChange={(e) => { this.handleInputChange(e) }}
-                                                onBlur={(e) => { this.handleBlurUsername(e) }}
-                                                data-testid="username" />
-                                            <p
-                                            data-testid = "usernameError"
-                                            className="error-message">{this.state.username.error}</p>
-                                            <MDBInput label="password" icon="lock" group type="password" validate
-                                                id="password" onChange={(e) => { this.handleInputChange(e) }}
-                                                onBlur={(e) => { this.handleBlurPassword(e) }} 
-                                                data-testid="password">
-                                               
+                                        </MDBCardHeader>
+                                        <form onSubmit={(e) => { this.handleLoginSubmit(e) }}>
+                                            <div className="grey-text">
+                                                <MDBInput label="username" icon="user"
+                                                    id="username"
+                                                    onChange={(e) => { this.handleInputChange(e) }}
+                                                    onBlur={(e) => { this.handleBlurUsername(e) }}
+                                                    data-testid="username" />
+                                                <p
+                                                    data-testid="usernameError"
+                                                    className="error-message">{this.state.username.error}</p>
+                                                <MDBInput label="password" icon="lock" group type="password" validate
+                                                    id="password" onChange={(e) => { this.handleInputChange(e) }}
+                                                    onBlur={(e) => { this.handleBlurPassword(e) }}
+                                                    data-testid="password">
+
                                                 </MDBInput>
-                                            <p
-                                            data-testid = "passwordError"
-                                            className="error-message">{this.state.password.error}</p>
-                                        </div>
-                                        <div className="text-center">
-                                            <MDBBtn onClick={(e) => { this.handleLoginSubmit(e) }}
-                                            data-testid="loginButton">Login</MDBBtn>
-                                        </div>
-                                    </form>
-                                    <MDBModalFooter>
-                                        <div className="font-weight-light">
-                                            <p>Not a member? <a href="/signup">  Sign Up</a></p>
+                                                <p
+                                                    data-testid="passwordError"
+                                                    className="error-message">{this.state.password.error}</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <MDBBtn onClick={(e) => { this.handleLoginSubmit(e) }}
+                                                    data-testid="loginButton">Login</MDBBtn>
+                                            </div>
+                                        </form>
+                                        <MDBModalFooter>
+                                            <div className="font-weight-light">
+                                                <p>Not a member? <a href="/signup">  Sign Up</a></p>
 
-                                        </div>
-                                    </MDBModalFooter>
-                                </MDBCardBody>
-                            </MDBCard>
+                                            </div>
+                                        </MDBModalFooter>
+                                    </MDBCardBody>
+                                </MDBCard>
 
-                        </MDBCol>
-                    </MDBRow>
-                </MDBContainer>
-               
-            </div>
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBContainer>
 
-           
-        </div> </LoadingOverlay>);
+                </div>
+
+
+            </div> </LoadingOverlay>);
     };
 
 }

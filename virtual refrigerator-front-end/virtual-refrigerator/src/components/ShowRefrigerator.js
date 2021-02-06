@@ -57,6 +57,7 @@ export default class ShowRefrigerator extends React.Component{
         const response = await backendAPI.getRefrigeratorByRefrigeratorId(this.state.id);
         if(response.statusCode === 200){
            const message = response.message.message;
+           console.log(message)
            this.setState({refrigeratorInfo : message})
         }
     }
@@ -199,7 +200,9 @@ export default class ShowRefrigerator extends React.Component{
 
              <div className="users-access">
                 {this.state.refrigeratorInfo["isOwner"] ?
-                    <UserAccess refInfo = {this.state.refrigeratorInfo} /> : null    
+                    <UserAccess
+                    data-testId="user-access"
+                    refInfo = {this.state.refrigeratorInfo} /> : null    
                 }
              </div>
 
