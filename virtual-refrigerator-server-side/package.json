@@ -23,10 +23,14 @@
     "supertest": "^6.0.1",
     "uuid": "^8.3.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "concurrently": "^5.3.0"
+  },
   "scripts": {
     "test": "jest",
-    "start": "node server.js"
+    "start": "nodemon server.js",
+    "client": "cd '../virtual refrigerator-front-end/virtual-refrigerator' && npm start",
+    "dev": "concurrently \"npm run start\" \"npm run client\""
   },
   "author": "Michael sisay",
   "license": "ISC"
