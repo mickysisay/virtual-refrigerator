@@ -9,7 +9,7 @@ import { Button, Modal } from 'react-bootstrap';
 import './login.css'
 import DateTimePicker from 'react-datetime-picker';
 
-export default class AddPersonalItem extends React.Component {
+export default class AddRefrigeratorItem extends React.Component {
   constructor(props) {
     super(props)
     const itemInfo = this.props.itemInfo;
@@ -58,10 +58,16 @@ export default class AddPersonalItem extends React.Component {
   }
   handleInputQuantity = (e) => {
     const numValue = Number(e.target.value);
-    if (typeof numValue === "number" && numValue < 100 && numValue > 0) {
-      this.setState({
-        quantity: numValue
-      });
+    if (numValue === 0) {
+        this.setState({
+            quantity: ""
+        })
+        return;
+    }
+    if (typeof numValue === "number" && numValue <= 100) {
+        this.setState({
+            quantity: numValue
+        });
     }
   }
   addRefrigeratorlItem = async () => {
@@ -81,7 +87,6 @@ export default class AddPersonalItem extends React.Component {
       return;
     }
     const response = await backendAPI.addRefrigeratorItem(data);
-    console.log(response);
     if (response.statusCode === 200) {
       NotificationManager.success('Success message', " item added to refrigerator succesfully", 1000, () => {
         alert('callback');
@@ -119,6 +124,7 @@ export default class AddPersonalItem extends React.Component {
             <MDBInput
               onChange={this.handleInputQuantity}
               value={this.state.quantity}
+              data-testid = "Quantity-item-add"
               label="Quantity" />
             {/* <MDBInput
                  value={this.state.barCode}

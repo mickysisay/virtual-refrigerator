@@ -138,3 +138,4 @@ it("changes view when clicking on switch", async () => {
   expect(refrigeratorPage.queryByTestId("grid-item-view")).toBeNull();
   expect(refrigeratorPage.queryByTestId("calendar-item-view")).toBeTruthy();
 });
+ 
