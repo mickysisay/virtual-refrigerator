@@ -46,8 +46,49 @@ class BasicUtils {
      const res =  await commonQueries.doesEmailExist(email) 
         return res;  
     }
+    static async login(req,res){
+        const username = req.body.username;
+        const password = req.body.password;
+    if(username == null || password == null){
+        res.status(400).send({status : false, message:"username or password is missing"});
+    }else{
+    const userInfo = await this.findByUsernameAndPassword(username,password); 
+    if(!userInfo.status){
+        res.status(400).send(userInfo);
+        return;
+    }  
+    delete userInfo.user.password;
+    jwt.sign({user: userInfo.user},
+    constants.SECRETKEY,{expiresIn : constants.EXPIRATIONTIME },async (err,token)=>{
+       const data = await jwt.verify(token,constants.SECRETKEY)
+        res.json({
+            type:"bearer",
+            token : token,
+            info : data
+        });   
+    });
+    }
+    }
+    static async signUp(req,res){
+        const dataVerification = await this.verifySignUpInformation(req);
+        if(!dataVerification.status){
+            res.status(400).json(dataVerification);
+        }else{
+        const id = this.createUniqueId();
+        const hashedPass =await bcrypt.hash(req.body.password, constants.SALTROUNDS);
+        const userData = {
+            id:id,
+            username : req.body.username,
+            password : hashedPass,
+            email : req.body.email.trim(),
+        }
+        const ress =  await commonQueries.addUserToDatabase(userData);
+        delete userData.password;
+        res.json({status:true, message: "user signed up succesfully",user:userData});
+        }
+    }
 
-     static async verifySignUpInformation(req){
+    static async verifySignUpInformation(req){
         let username = req.body.username;
         let password = req.body.password;
         let email = req.body.email;

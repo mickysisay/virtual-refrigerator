@@ -1,7 +1,7 @@
 const SECRETKEYJWT = 'secret';
 const SECRETSALT = 'anotherSecret';
 const SALTROUNDS = 10;
-const EXPIRATIONTIME = "30m";
+const EXPIRATIONTIME = "5m";
 
 let mockUsers = [
     
