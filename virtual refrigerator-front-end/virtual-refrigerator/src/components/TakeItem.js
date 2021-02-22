@@ -108,18 +108,20 @@ export default class TakeItem extends React.Component {
                         disabled
                         label="Status" />
 
-
+                    {this.state.expiration_date ?
                     <div>Expiration Date &nbsp;&nbsp;
                        <DateTimePicker
                             disabled={true}
                             value={this.state.expiration_date}
                         />
-                    </div>
+                    
+                    </div> : null}
+                    {this.state.bar_code ?
                     <MDBInput
                         value={this.state.bar_code}
                         label="bar code"
                         disabled
-                    />
+                    /> : null}
 
                 </Modal.Body>
 

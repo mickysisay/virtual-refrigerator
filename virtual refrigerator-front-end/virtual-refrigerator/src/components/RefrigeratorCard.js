@@ -134,11 +134,16 @@ export default class RefrigeratorCard extends React.Component {
          d = new Date(t);
         }
         return (
-            <Card style={{ width: '18rem', height: '12rem' }}>
+            <Card 
+            className = "refrigerator-card"
+            style={{ width: '18rem', height: '12rem' }}>
                 <Card.Body onClick={() => { this.props.handleClick(this.state.refrigerator["id"]) }}>
                     <Card.Title>{this.editedRefrigerator} </Card.Title>
                     <Card.Text>
                         Created {d ? timeAgo.format(d) : ""}
+                    </Card.Text>
+                    <Card.Text>
+                        {this.state.refrigerator.isOwner ? `Owned by ${this.state.refrigerator.username} (you)`: `Shared by ${this.state.refrigerator.username}`}
                     </Card.Text>
                 </Card.Body>
                 {this.state.refrigerator.isOwner ?

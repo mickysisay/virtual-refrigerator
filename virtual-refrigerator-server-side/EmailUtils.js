@@ -66,8 +66,9 @@ async function getUserEmails(obj){
           const emails = await commonQueries.getUserEmailsFromUserIds(obj[e]["user_ids"]);
           let allE = emails.map(e=>e.email)
           const items = obj[e]["items"];
-          const string = `Hi, some Item/s has expired in your ${obj[e]['refrigerator_name']} ,please login and
-          check them out. Here are the expired Items : ${items.join(' , ')}`
+          const string = `Hi, some Item(s) has expired in your ${obj[e]['refrigerator_name']} ,please login and
+          check them out. Here are the expired Items : ${items.join(' , ')}. Or click on this link to view your refrigerator
+          https://vr.ngrok.io/refrigerator/${e} .`
           const allEmails = allE.join(',')
           main(string,allEmails);
     })

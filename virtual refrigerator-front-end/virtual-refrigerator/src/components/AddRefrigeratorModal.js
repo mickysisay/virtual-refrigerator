@@ -5,7 +5,8 @@ import { Button, Modal } from 'react-bootstrap';
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Grid } from '@material-ui/core';
-import { MDBInput } from "mdbreact";
+import { MDBInput,MDBIcon } from "mdbreact";
+import { Card } from 'react-bootstrap';
 import './login.css'
 import NotificationManager from "react-notifications/lib/NotificationManager";
 
@@ -74,13 +75,20 @@ export default class AddRefrigeratorModal extends React.Component {
     render() {
 
         return (
-            <Grid container direction="row" className='mt-5'>
-                <Button data-testid="addRefrigeratorButton" variant="secondary" size="lg" block
-                    onClick={this.addRefrigeratorModal}
-                >
-                    Add Refrigerator
-       </Button>
-            </Grid>
+
+            <Card 
+            className = "refrigerator-card"
+            style={{ width: '18rem', height: '12rem' }}
+            onClick={this.addRefrigeratorModal}>
+                        <Card.Body>
+                                <MDBIcon style={{marginLeft:"90px",marginTop:"-5px"}} icon="plus" size="5x" />
+                                <Card.Text style={{fontSize : "30px",marginTop:"20px",marginLeft:"15px"}}>
+                                  add refrigerator
+                                </Card.Text>
+                        </Card.Body>
+             </Card>
+
+  
 
         );
     }

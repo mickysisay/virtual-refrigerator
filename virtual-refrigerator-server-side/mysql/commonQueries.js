@@ -131,7 +131,7 @@ const getAllRefrigeratorsByUserId = async (userId) =>{
     }
     const query = util.promisify(connection.query).bind(connection);
     let result = await query({
-        sql : 'SELECT * FROM `refrigerators` WHERE `owner_id` = ?  ',
+        sql : 'SELECT r.*, u.username FROM `refrigerators` r INNER JOIN `users` u  ON u.id = r.owner_id AND r.owner_id = ?  ',
         timeout: 40000,
         values:[userId]
     });
@@ -230,7 +230,7 @@ const addNewItem = async (itemInformation) =>{
     const itemName = itemInformation["item_name"];
     const expirationDate = itemInformation["expiration_date"];
     const quantity = itemInformation["quantity"] ? itemInformation["quantity"] : 1;
-    const status = 'NORMAL';
+    const status = itemInformation["status"] || 'NORMAL';
     const refrigeratorId = itemInformation["refrigerator_id"];
     const barCode = itemInformation["bar_code"];
     let connection = openConnection();
@@ -541,8 +541,8 @@ const getRefrigeratorsWithAccess = async (userId) =>{
     }
     const query = util.promisify(connection.query).bind(connection);
     let result = await query({
-        sql : 'SELECT r.* from  `refrigerators` r inner JOIN `users_access`'
-        +' u ON u.user_id = ? AND r.id = u.refrigerator_id' ,
+        sql : 'SELECT r.*,us.username from  `refrigerators` r inner JOIN `users_access`'
+        +' u ON u.user_id = ? AND r.id = u.refrigerator_id iNNER JOIN `users` us ON r.owner_id = us.id' ,
         timeout: 40000,
         values:[userId]
     });
@@ -667,6 +667,43 @@ const getUserEmailsFromUserIds =async (idArray) =>{
     result = JSON.parse(result);
     return result;
 }
+const lookForItemWithBarcodeInAllItems = async (barcode) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'SELECT * from `all_items` WHERE `barcode` = ?',
+        timeout: 40000,
+        values:[barcode]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
+const addItemToAllItems = async (item) =>{
+    let connection = openConnection();
+    if(!connection){
+        console.log();
+        return;
+    }
+    const name = item.name;
+    const image = item.image;
+    const barcode = item.barcode;
+    const query = util.promisify(connection.query).bind(connection);
+    let result = await query({
+        sql : 'INSERT INTO `all_items` (`name`,`barcode`,`image`) values (?,?,?)' ,
+        timeout: 40000,
+        values:[name,barcode,image]
+    });
+    connection.end();
+    result = JSON.stringify(result);
+    result = JSON.parse(result);
+    return result;
+}
 
 module.exports = {
     addUserToDatabase: addUserToDatabase,
@@ -700,5 +737,7 @@ module.exports = {
     getRefrigeratorsWithAccess : getRefrigeratorsWithAccess,
     getAllUsersWithAccess : getAllUsersWithAccess,
     getUserIdsFromRefrigeratorIds,
-    getUserEmailsFromUserIds
+    getUserEmailsFromUserIds,
+    lookForItemWithBarcodeInAllItems,
+    addItemToAllItems
 }

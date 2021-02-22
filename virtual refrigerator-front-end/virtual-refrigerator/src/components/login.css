@@ -22,6 +22,7 @@
     margin-bottom:20px;
     font-family: 'Times New Roman', Times, serif;
     font-size: 1.5vw;
+    max-height: 60px;;
     
 }
 .refrigerator-item{
@@ -30,11 +31,12 @@
     font-size: 1.5vw !important;
     box-shadow: 2px 4px #888888;
 }
-.card-body{
+.refrigerator-item>.card-body{
     padding : 2vw !important;
 }
 .refrigerator-item-title{
     font-size:1.5vw !important;
+    
 }
 .form-control-sm::-webkit-input-placeholder{
     font-size:1.5vw;
@@ -42,14 +44,24 @@
 .personal-Item:hover{
     box-shadow: 5px 10px #888888;
 }
+.refrigerator-card{
+    cursor: pointer;
+}
+.refrigerator-card:hover{
+    box-shadow:  5px 10px #888888;
+}
 .refrigerator-item:hover{
     box-shadow: 5px 10px #888888;
 }
 .right{
     margin-left:10px;
+    justify-content: space-between;
 }
 .left{
     overflow: hidden;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+    max-width:19vw;
 }
 .either-end{
     display: flex;
@@ -112,8 +124,8 @@
     border: 1px solid black;
     box-shadow: 2px 4px #888888;
 }
-.home-button>a:hover{
-   
+.home-button:hover{
+    color: black;
     text-decoration: none;
 }
 .home-button:hover{
@@ -130,6 +142,13 @@
 .refrigerator-items{
     float:right;
     width:60%;
+    font-size: 1.5vw;
+    margin-top: 80px;
+}
+.refrigerator-items-expanded{
+    float:right;
+    margin-top:0px !important;
+    width:95%;
     font-size: 1.5vw;
     margin-top: 80px;
 }
@@ -198,3 +217,8 @@ span{
     margin-right: 5px;
     font-size: 1.5vw;
 }
+ .card-title{
+     overflow: hidden;
+     text-overflow: ellipsis;
+     max-height: 9.3vw !important; 
+} 

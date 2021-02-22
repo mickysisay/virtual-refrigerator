@@ -19,6 +19,7 @@ export default class AddRefrigeratorItem extends React.Component {
     this.state = {
       item_name: itemName,
       barCode: barCode,
+      image:null,
       quantity: 1,
       expiration_date: null,
       isScannerOn: false,
@@ -41,14 +42,32 @@ export default class AddRefrigeratorItem extends React.Component {
         item_name: item["item_name"],
         barCode: item["bar_code"]
       });
-      NotificationManager.success('Success message', "item retrieved succesfully", 1000, () => {
+      NotificationManager.success('Success message', "item retrieved succesfully", 3000, () => {
         alert('callback');
       });
       console.log(this.state.item_name);
     } else {
-      NotificationManager.error('Error message', response.message.message, 3000, () => {
-        alert('callback');
-      });
+      //try to look for item from the other endpoint  
+      const response2 = await backendAPI.getBarCodeInfo(code);
+      if(response2.statusCode === 200){
+        const data = response2.message.message;
+         this.setState({
+           item_name : data.name,
+           barCode : data.barcode,
+           image : data.image
+         })
+         NotificationManager.success(
+          "Success message",
+          "item retrieved succesfully",
+          3000
+        );
+      }else{
+        NotificationManager.error(
+          "Error message",
+          "No item found,please insert info manually",
+          3000
+        );  
+      }
     }
   }
   handleInputItemName = (e) => {
@@ -72,7 +91,7 @@ export default class AddRefrigeratorItem extends React.Component {
   }
   addRefrigeratorlItem = async () => {
     const data = {
-      "item_name": this.state.item_name,
+      "item_name": this.state.item_name.trim(),
       "bar_code": this.state.barCode,
       "refrigerator_id": this.state.refrigeratorId,
       "quantity": this.state.quantity
@@ -113,7 +132,7 @@ export default class AddRefrigeratorItem extends React.Component {
 
 
           <Modal.Header closeButton onClick={this.props.onClose}>
-            <Modal.Title>Add Item To Refigerator</Modal.Title>
+            <Modal.Title>Add Item To Refrigerator</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
@@ -132,7 +151,9 @@ export default class AddRefrigeratorItem extends React.Component {
                  disabled  /> */}
             <div>Expiration Date &nbsp;&nbsp;
                  <DateTimePicker
-                minDate={new Date()}
+               // minDate={new Date()}
+                showLeadingZeros = {false}
+                disableClock = {true}
                 onChange={this.handleExpirationDateChange}
                 value={this.state.expiration_date}
               />
@@ -143,7 +164,7 @@ export default class AddRefrigeratorItem extends React.Component {
               hint="bar Code"
               disabled
               append={
-                <Button variant="secondary" onClick={() => { this.changeisScannerOn(true) }}>Scan</Button>
+                <Button style={{zIndex:0}} variant="secondary" onClick={() => { this.changeisScannerOn(true) }}>Scan</Button>
               }
             />
 

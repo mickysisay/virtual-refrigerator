@@ -26,7 +26,7 @@ export default class EditRefrigeratorItem extends React.Component {
 
     editItemConfirm = async (onClose) => {
         const data = {
-            "item_name": this.state.item_name,
+            "item_name": this.state.item_name.trim(),
             "id": this.state.id,
             "refrigerator_id": this.state.refrigerator_id,
             "quantity": this.state.quantity,
@@ -115,7 +115,7 @@ export default class EditRefrigeratorItem extends React.Component {
                        disabled  /> */}
                         <div>Expiration Date &nbsp;&nbsp;
                        <DateTimePicker
-                                minDate={new Date()}
+                                // minDate={new Date()}
                                 onChange={this.handleExpirationDateChange}
                                 value={this.state.expiration_date}
                             />

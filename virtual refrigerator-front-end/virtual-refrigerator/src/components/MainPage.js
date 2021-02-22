@@ -5,6 +5,7 @@ import { Grid } from '@material-ui/core';
 import 'bootstrap/dist/css/bootstrap.css'
 import AddRefrigeratorModal from './AddRefrigeratorModal'
 
+
 export default class MainPage extends React.Component {
 
     constructor(props) {
@@ -58,9 +59,11 @@ export default class MainPage extends React.Component {
                                 updateRef={this.saveAllRefrigerators} refrigerator={e} />
                         </Grid>)
                     })}
-
+                    <Grid item>
+                       <AddRefrigeratorModal updateRef={this.saveAllRefrigerators} />
+                    </Grid>
                 </Grid>
-                <AddRefrigeratorModal updateRef={this.saveAllRefrigerators} />
+                
             </div>
         );
     }

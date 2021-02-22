@@ -38,6 +38,7 @@ export default class ItemScanner extends React.Component {
                         }, 1000);
                     }
                     results.push(lastCode);
+                    console.log(lastCode);
                     if (results.length === 20) {
                         let code = await orderByFrequency(results);
                         this.props.setBarCode(code);
@@ -62,8 +63,8 @@ export default class ItemScanner extends React.Component {
                     // }   
                 },
                 decoder: {
-                    readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader",
-                        "upc_e_reader", "i2of5_reader", "2of5_reader", "codabar_reader", "code_93_reader", "upc_reader"]
+                    readers: [ "upc_reader","upc_e_reader", "ean_reader", "ean_8_reader", "code_39_reader","code_128_reader", "code_39_vin_reader",
+                         "i2of5_reader", "2of5_reader", "codabar_reader", "code_93_reader"]
                 }
             },
                 (err) => {

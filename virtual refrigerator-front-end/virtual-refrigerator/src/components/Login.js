@@ -34,12 +34,22 @@ export default class Login extends React.Component {
         if (e.target.id === "username") {
             const username = this.state.username;
             username.value = e.target.value;
+            if(username.value.trim().length === 0){
+                username.error = "Username can't be empty"
+            }else{
+                username.error = "";
+            }
             this.setState({
                 username: username
             });
         } else if (e.target.id === "password") {
             const password = this.state.password;
             password.value = e.target.value;
+            if(password.value.trim().length === 0){
+                password.error = "Password can't be empty"
+            }else{
+                password.error = "";
+            }
             this.setState({
                 password: password
             });
@@ -51,12 +61,7 @@ export default class Login extends React.Component {
         const username = this.state.username;
 
         if (this.state.username.value === "") {
-            username.error = "Username is empty";
-            this.setState({
-                username: username
-            });
-        } else if (this.state.username.value.length < 6) {
-            username.error = "Username too short";
+            username.error = "Username can't be empty";
             this.setState({
                 username: username
             });
@@ -74,11 +79,6 @@ export default class Login extends React.Component {
             this.setState({
                 password: password
             });
-        } else if (this.state.password.value.length < 6) {
-            password.error = "Password is too short";
-            this.setState({
-                password: password
-            });
         } else {
             password.error = "";
             this.setState({
@@ -91,7 +91,7 @@ export default class Login extends React.Component {
 
         if (this.state.username.value.length === 0) {
             const username = this.state.username;
-            username.error = "username can't be empty";
+            username.error = "Username can't be empty";
             this.setState({
                 username: username
             });
@@ -99,7 +99,7 @@ export default class Login extends React.Component {
         }
         if (this.state.password.value.length === 0) {
             const password = this.state.password;
-            password.error = "password can't be empty";
+            password.error = "Password can't be empty";
             this.setState({
                 password: password
             });
@@ -122,6 +122,7 @@ export default class Login extends React.Component {
         const message = resp.message.message;
         let referrer = "";
         try {
+            console.log(this.props.location);
             referrer = this.props.location.state.referrer;
         } catch (ex) { };
 

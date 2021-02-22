@@ -25,6 +25,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import UserAccess from "./UsersAccess";
+import AddRefrigeratorItemCard from "./AddRefrigeratorItemCard";
 
 export default class ShowRefrigerator extends React.Component {
   constructor(props) {
@@ -169,9 +170,9 @@ export default class ShowRefrigerator extends React.Component {
           sidebarClassName="side-bar"
           sidebar={
             <div>
-              <div className="home-button">
-                <a href="/">Home</a>
-              </div>
+              <a href="/" className="home-button">
+                <span >Home</span>
+              </a>
 
               <div className="personal-Items">
                 <MDBFormInline className="md-form">
@@ -227,7 +228,7 @@ export default class ShowRefrigerator extends React.Component {
                   style={{ cursor: "pointer" }}
                   onClick={() => this.onSetSidebarOpen(true)}
                 >
-                  Sidebar
+                  Favorites
                 </Navigationbar.Brand>
 
                 <Navigation className="mr-auto">
@@ -238,6 +239,7 @@ export default class ShowRefrigerator extends React.Component {
                 <Form inline>
                   <Navigation className="mr-auto">
                     <Navigationbar.Brand
+                      title = {"take item"}
                       data-testid="scan-to-take-item-button"
                       style={{ cursor: "pointer" }}
                       onClick={() => this.openItemScanner()}
@@ -258,18 +260,18 @@ export default class ShowRefrigerator extends React.Component {
                 ) : null}
               </div>
 
-              <div className="refrigerator-items">
+              <div className={`${this.state.refrigeratorInfo["isOwner"] ? "refrigerator-items" : "refrigerator-items-expanded"}`}>
                 <MDBFormInline className="md-form">
                   <MDBIcon icon="search" />
                   <input
                     className="form-control form-control-sm ml-3 w-75"
                     type="text"
-                    placeholder="Search Refrigerator Items"
+                    placeholder={`Search ${this.state.refrigeratorInfo["refrigerator_name"] || "refrigerator"} items`}
                     aria-label="Search"
                     onChange={this.filterAllItems}
                   />
                 </MDBFormInline>
-                <Button
+                {/* <Button
                   block
                   className="add-buttons"
                   onClick={() => {
@@ -277,18 +279,26 @@ export default class ShowRefrigerator extends React.Component {
                   }}
                 >
                   Add Refrigerator Item
-                </Button>
+                </Button> */}
                 <div className="toggle-calendar">
-                  <span>Normal</span>
+                  <label >
+                  <span
+                  >Normal</span>
                   <Switch
                     data-testid="item-view-switch"
+                    onColor="#337DFF"
+                    offColor="#0000FF"
+                    checkedIcon = {null}
+                    uncheckedIcon= {null}
                     height={window.innerWidth * 0.015}
                     width={window.innerWidth * 0.04}
                     className="toggle-calendar-switch"
                     onChange={this.toggleShowCalendar}
                     checked={this.state.showingCalender}
                   />
-                  <span>Calendar</span>
+                  <span
+                  >Calendar</span>
+                  </label>
                 </div>
                 <hr />
                 {this.state.showingCalender ? (
@@ -329,9 +339,8 @@ export default class ShowRefrigerator extends React.Component {
                           </Grid>
                         );
                       })
-                    ) : (
-                      <div>No items found</div>
-                    )}
+                    ) : null}
+                    <Grid><AddRefrigeratorItemCard createRefrigeratorItemModal = { this.createRefrigeratorItemModal}  /></Grid>
                   </Grid>
                 )}
               </div>

@@ -7,6 +7,7 @@ import { MDBIcon } from 'mdbreact';
 import { confirmAlert } from 'react-confirm-alert';
 import EditRefrigeratorItem from './EditRefrigeratorItem'
 import TakeItem from './TakeItem'
+import ExpiredWarning from "./ExpiredWarning";
 
 export default class RefrigeratorItemShow extends React.Component {
     constructor(props) {
@@ -105,12 +106,18 @@ export default class RefrigeratorItemShow extends React.Component {
     }
 
     render() {
+        
         return (
-            <div>
+            <div    
+            style={{cursor:"pointer"}}
+            title={this.state.item_name}>
                 <Card className="refrigerator-item" style={{ width: '13vw', height: '15vw' }} onClick={(e) => { this.takeItemOut() }}>
                     <Card.Body>
                         <Card.Title className="refrigerator-item-title">{
-                            this.state.status === "EXPIRED" ? <MDBIcon icon="exclamation-triangle" className="red-text">&nbsp;&nbsp;</MDBIcon> : null
+                            this.state.status === "EXPIRED" ? 
+                            // <MDBIcon icon="exclamation-triangle" className="red-text">&nbsp;&nbsp;</MDBIcon>
+                            <><ExpiredWarning />&nbsp;</>
+                             : null
                         }{this.state.item_name} </Card.Title>
                     </Card.Body>
 

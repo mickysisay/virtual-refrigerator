@@ -231,6 +231,11 @@ const deletePersonalItem = async (data) => {
   const response = await postRequestsWithToken(endpoint, data);
   return response;
 };
+const getBarCodeInfo = async (barcode) =>{
+  const endpoint = APPURL +"personal_item/lookup?bar_code="+barcode;
+  const response = await getRequestsWithToken(endpoint);
+  return response;
+}
 const backendAPI = {
   postRequestsWithToken: postRequestsWithToken,
   getRequestsWithToken: getRequestsWithToken,
@@ -256,6 +261,7 @@ const backendAPI = {
   giveUserAccess: giveUserAccess,
   takeAccessAway: takeAccessAway,
   deletePersonalItem,
+  getBarCodeInfo
 };
 
 export default backendAPI;

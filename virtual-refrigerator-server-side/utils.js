@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config({path:__dirname+"/config.env"})
 const constants = require('./constants');
 const bcrypt = require('bcrypt');
 const { v1: uuidv1 } = require('uuid');
 const commonQueries = require('./mysql/commonQueries');
 const moment = require('moment');
+const axios = require("axios");
 
 class BasicUtils {
 
@@ -16,7 +18,7 @@ class BasicUtils {
        const token = bearerHeader.split(" ")[1];
        req.token = token;
        try{
-         await jwt.verify(token,constants.SECRETKEY);
+         await jwt.verify(token,process.env.SECRETKEYJWT);
        }catch(e){
            res.status(401).json({success:false,message:e.message});
            return;
@@ -28,7 +30,7 @@ class BasicUtils {
        }
    } 
     static async getInfoFromToken(req){
-     return jwt.verify(req.token,constants.SECRETKEY,(err,data)=>{
+     return jwt.verify(req.token,process.env.SECRETKEYJWT,(err,data)=>{
            if(err){
                return false;
            }else{
@@ -59,8 +61,8 @@ class BasicUtils {
     }  
     delete userInfo.user.password;
     jwt.sign({user: userInfo.user},
-    constants.SECRETKEY,{expiresIn : constants.EXPIRATIONTIME },async (err,token)=>{
-       const data = await jwt.verify(token,constants.SECRETKEY)
+    process.env.SECRETKEYJWT,{expiresIn : constants.EXPIRATIONTIME },async (err,token)=>{
+       const data = await jwt.verify(token,process.env.SECRETKEYJWT)
         res.json({
             type:"bearer",
             token : token,
@@ -131,10 +133,10 @@ class BasicUtils {
             if(passwordMatches){
                return {status : true, user : res}
             }else{
-                return {status:false,message:"incorrect password"};
+                return {status:false,message:"Invalid username/password"};
             }
         }else{
-            return {status:false,message:"No users found with that username"};
+            return {status:false,message:"Invalid username/password"};
         }
        
     }
@@ -279,8 +281,9 @@ class BasicUtils {
             }
             //check if date is after today
             if(Date.now() >= itemInformation["expiration_date"]){
-                res.status(400).json({status:false,message:"expiration date should be older than today"});
-                return;
+                // res.status(400).json({status:false,message:"expiration date should be older than today"});
+                // return;
+                itemInformation["status"] = "EXPIRED";
             }
             itemInformation["expiration_date"] =  moment(itemInformation["expiration_date"]).format();
         }
@@ -363,8 +366,9 @@ class BasicUtils {
             }
             //check if date is after today
             if(Date.now() >= itemInformation["expiration_date"]){
-                res.status(400).json({status:false,message:"expiration date should be older than today"});
-                return;
+                // res.status(400).json({status:false,message:"expiration date should be older than today"});
+                // return;
+                itemInformation["status"] = "EXPIRED";
             }else{
                 itemInformation["status"] = "NORMAL";  
             }
@@ -655,6 +659,7 @@ class BasicUtils {
         }
         const response = await commonQueries.getPersonalItemByOwnerIdAndbarCode(data.user.id,barCode);
         if(response.length === 0){
+
             res.status(404).json({status:false,message:"no personal item found"});
             return;
         }
@@ -695,6 +700,55 @@ class BasicUtils {
         const response1 =await commonQueries.getRefrigeratorByUserIdAndRefrigeratorId(userId,refrigeratorId);
         const response2 = await commonQueries.doesUserHasAccessToRefrigerator(userId,refrigeratorId);
         return (response1.length !==0 || response2);
+    }
+    static async getBarCodeInfo (req,res){
+        const data = await this.getInfoFromToken(req);
+        if(!data.user){
+            res.status(400).json({status:false,message:"no user found with that jwt token"});
+            return;
+        }
+        const barCode = req.query.bar_code;
+        if(typeof barCode !== "string"){
+            res.status(400).json({status:false,message:"not a valid barcode"});
+            return;
+        }
+        const response = await this.barCodeLookUp(barCode);
+        if(response.length === 0){
+            res.status(404).json({status:false,message:"no item found with that barcode"});
+            return;
+        }
+        res.json({status:true,message:response[0]})
+    }
+    static async barCodeLookUp(barCode){
+        //look through my database 
+        const dataBaseResponse = await commonQueries.lookForItemWithBarcodeInAllItems(barCode);
+        if(dataBaseResponse.length !==0){
+            return dataBaseResponse;
+        }
+        //make api call
+        
+        try{
+       const serverRequest = await axios({
+           method : 'get',
+           url : `https://api.barcodespider.com/v1/lookup?token=ee7629e31261c243c6e6&upc=${barCode}`
+       });
+       const data = serverRequest.data;
+
+       console.log(data);
+     
+       if(data.item_attributes.title){
+           const itemInfo = {
+               name : data.item_attributes.title,
+               barcode : barCode,
+               image : data.item_attributes.image
+           }
+        //save item to database
+          commonQueries.addItemToAllItems(itemInfo);
+          return [itemInfo]; 
+       }
+        }catch(e){
+            return [];
+        }
     }
 }
 

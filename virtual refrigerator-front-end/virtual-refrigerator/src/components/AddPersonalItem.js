@@ -14,14 +14,37 @@ export default class AddPersonalItem extends React.Component {
     this.state = {
       itemName: "",
       barCode: "",
+      image: null,
       isScannerOn: false,
     };
   }
   setBarCode = async (code) => {
-    this.setState({
-      barCode: code,
-    });
-    console.log(this.state);
+    //code = "009800895250";
+    const response = await backendAPI.getBarCodeInfo(code);
+    console.log(response);
+    if(response.statusCode === 200){
+      const data = response.message.message;
+       this.setState({
+         itemName : data.name,
+         barCode : data.barcode,
+         image : data.image
+       })
+       NotificationManager.success(
+        "Success message",
+        "Item found succesfully",
+        3000
+      );
+    }else{
+      this.setState({
+        barCode: code,
+      });
+      NotificationManager.error(
+        "Error message",
+        "No item found,please insert info manually",
+        3000
+      );  
+    }
+    
   };
   addPersonalItem = async () => {
     const data = {
@@ -81,7 +104,7 @@ export default class AddPersonalItem extends React.Component {
             <Modal.Body>
               <MDBInput
                 onChange={this.handleInput}
-                valueDefault={this.state.itemName}
+                value={this.state.itemName}
                 label="Item name"
                 data-testid="personal-item-name"
               />

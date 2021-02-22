@@ -44,6 +44,26 @@ export default class SignUp extends React.Component {
     handleInputChange = (e) => {
         const key = this.state[e.target.id];
          key.value = e.target.value;
+         if(key.value.trim().length <6){
+             if(e.target.id === "confirmPassword"){
+                 key.error = "confirm password is too short"
+             }else{
+                key.error = `${e.target.id} is too short`
+             }
+         }else{
+            if(e.target.id === "confirmPassword" && e.target.value !== this.state.password.value){
+                key.error = "passwords don't match"
+            }else{
+             key.error = ``;
+            }
+         }
+         if(key.value.trim().length === 0){
+            if(e.target.id === "confirmPassword"){
+                key.error = "confirm password can't be empty"
+            }else{
+             key.error = `${e.target.id} can't be empty`
+             } 
+          }
         if (e.target.id === "username") {
             this.setState({
                 username: key
@@ -66,12 +86,12 @@ export default class SignUp extends React.Component {
         const username = this.state.username;
         
         if(this.state.username.value === ""){
-            username.error = "Username is empty";
+            username.error = "username can't be empty";
             this.setState({
                 username : username
             });
         }else if(this.state.username.value.length < 6){
-            username.error ="Username too short" ;
+            username.error ="username is too short" ;
             this.setState({
                 username : username
             });
@@ -85,12 +105,12 @@ export default class SignUp extends React.Component {
     handleBlurPassword = (e) => {
         const password = this.state.password;
         if(this.state.password.value === ""){
-            password.error = "Password can't be empty";
+            password.error = "password can't be empty";
             this.setState({
                 password :password
             });
         }else if(this.state.password.value.length < 6){
-            password.error = "Password is too short" ;
+            password.error = "password is too short" ;
             this.setState({
                 password : password
             });
@@ -104,12 +124,12 @@ export default class SignUp extends React.Component {
     handleBlurEmail = (e) => {
         const email = this.state.email;
         if(this.state.email.value === ""){
-            email.error = "Email can't be empty";
+            email.error = "email can't be empty";
             this.setState({
                 email:email
             });
         }else if(this.state.email.value.length < 6){
-            email.error = "Email is too short" ;
+            email.error = "email is too short" ;
             this.setState({
                 email:email
             });
@@ -120,10 +140,11 @@ export default class SignUp extends React.Component {
             });
         }
     }
+
     handleBlurConfirmPassword = (e) => {
         const confirmPassword = this.state.confirmPassword;
         if(this.state.password.value !== this.state.confirmPassword.value){
-            confirmPassword.error = "Passwords don't match";
+            confirmPassword.error = "passwords don't match";
             this.setState({
                 confirmPassword : confirmPassword
             });
@@ -140,7 +161,7 @@ export default class SignUp extends React.Component {
 
         if (this.state.username.value.length === 0) {
             const username = this.state.username;
-            username.error = "username can't be empty";
+            username.error = "Username can't be empty";
             this.setState({
                 username:username
             });
@@ -148,7 +169,7 @@ export default class SignUp extends React.Component {
         }
         if (this.state.password.value.length === 0) {
             const password = this.state.password;
-            password.error = "password can't be empty";
+            password.error = "Password can't be empty";
             this.setState({
                 password : password
             });
@@ -156,7 +177,7 @@ export default class SignUp extends React.Component {
         }
         if (this.state.email.value.length === 0) {
             const email = this.state.email;
-            email.error = "email can't be empty";
+            email.error = "Email can't be empty";
             this.setState({
                 email: email
             });
@@ -191,8 +212,19 @@ export default class SignUp extends React.Component {
             },
             isLoading: true
         });
-         
-        setTimeout(()=>{this.props.history.push("login")},2000)  
+        const loginRequest = await backendAPI.loginRequest({
+            "username" : this.state.username.value,
+            "password" : this.state.password.value,
+        })
+        const message = loginRequest.message;
+        if(resp.statusCode === 200){
+            const token = message.type + " " + message.token;
+            localStorage.setItem("token", token);
+            this.props.updateLoggedIn();
+            setTimeout(()=>{this.props.history.push("/")},2000)  
+        }else{
+            setTimeout(()=>{this.props.history.push("login")},2000)  
+        }        
         
        }else{
            this.setState({
@@ -250,7 +282,7 @@ export default class SignUp extends React.Component {
                                         </MDBCardHeader>
                                         <form onSubmit={(e) => { this.handleSignupSubmit(e) }}>
                                             <div className="grey-text">
-                                                <MDBInput label="Username" icon="user"
+                                                <MDBInput label="Username (minimum of 6 characters)" icon="user"
                                                     id="username"
                                                     onChange={(e) => { this.handleInputChange(e) }}
                                                     onBlur={(e) => {this.handleBlurUsername(e) }}
@@ -265,7 +297,7 @@ export default class SignUp extends React.Component {
                                                     data-testid="email"/>
                                                       <p className="error-message"
                                                       data-testid="emailError">{this.state.email.error}</p>
-                                                <MDBInput label="Password" icon="lock" group type="password" validate
+                                                <MDBInput label="Password (minimum of 6 characters)" icon="lock" group type="password" validate
                                                     id="password" onChange={(e) => { this.handleInputChange(e) }}
                                                     onBlur={(e) => {
                                                         this.handleBlurPassword(e)

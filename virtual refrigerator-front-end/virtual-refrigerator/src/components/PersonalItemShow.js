@@ -70,7 +70,10 @@ export default class PersonalItemShow extends React.Component {
         });
     }
     render() {
-        return (<div className="personal-Item" onClick={(e) => { console.log("whole") }}>
+        return (<div
+        style={{cursor:"default"}}
+        title={this.state.itemName}
+        className="personal-Item" onClick={(e) => { console.log("whole") }}>
             <div className="left">
                 {this.state.itemName}
             </div>
